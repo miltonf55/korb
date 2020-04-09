@@ -20,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/miltonf55/korb/issues"
   },
-  "homepage": "https://github.com/miltonf55/korb#readme"
+  "homepage": "https://github.com/miltonf55/korb#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "mysql": "^2.18.1"
+  }
 }
