@@ -1,0 +1,832 @@
+const mysql = require("mysql");
+const pool = mysql.createPool({
+    host: "localhost",
+    user: "root",
+    password: "n0m3l0",
+    database: "korbdb",
+    port: 3306
+});
+
+const {
+    cifrar,
+    decifrar
+} = require("../middlewares/cifrado.js");
+
+
+
+
+const probarConexion = () => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve("Base de Datos en linea");
+            }
+            connection.release();
+        });
+    });
+};
+
+
+const validarCorreo = (correo) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select * from usuario`, (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        var disponible = true;
+
+                        for (usuario of res) {
+                            if (decifrar(usuario.cor_usu) === correo) {
+
+                                disponible = false;
+                            }
+                        }
+
+                        resolve(disponible);
+                    }
+                });
+            }
+            connection.release();
+        });
+    });
+}
+
+
+const validarUsername = (username) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select * from usuario where usus_usu='${username}'`, (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+
+                        if (res[0] != undefined) {
+
+                            resolve(false);
+                        } else {
+
+                            resolve(true);
+                        }
+                    }
+                });
+            }
+            connection.release();
+        });
+    });
+}
+
+
+const agregarUsuario = (usuario) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err)
+            } else {
+
+                connection.query(`insert into usuario (nom_usu,app_usu,apm_usu,usus_usu,pas_usu,cor_usu,id_pri) 
+                    values('${usuario.nombre}','${usuario.appaterno}','${usuario.apmaterno}','${usuario.username}','${usuario.password}','${usuario.correo}',2)`, (err) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve("Registrado");
+                    }
+                });
+
+            }
+            connection.release();
+        });
+    });
+}
+
+
+const iniciarSesion = (correo, password) => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {
+                connection.query(`select * from usuario`, (err, res) => {
+
+                    let datos = undefined;
+
+                    for (usuario of res) {
+                        if (decifrar(usuario.cor_usu) === correo && decifrar(usuario.pas_usu) === password) {
+
+                            datos = {
+                                id: usuario.id_usu,
+                                nombreCompleto: `${decifrar(usuario.app_usu)} ${decifrar(usuario.apm_usu)} ${decifrar(usuario.nom_usu)}`,
+                                nombre: decifrar(usuario.nom_usu),
+                                appaterno: decifrar(usuario.app_usu),
+                                apmaterno: decifrar(usuario.apm_usu),
+                                username: usuario.usus_usu,
+                                correo: decifrar(usuario.cor_usu),
+                                privilegios: usuario.id_pri
+                            }
+                        }
+                    }
+                    resolve(datos);
+
+                });
+            }
+            connection.release();
+        });
+
+    });
+}
+
+
+const actualizarDatosUsuario = (id, datos) => {
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`update usuario set nom_usu='${cifrar(datos.nombre)}',app_usu='${cifrar(datos.appaterno)}',apm_usu='${cifrar(datos.apmaterno)}', cor_usu='${cifrar(datos.correo)}', usus_usu='${datos.username}' where id_usu='${id}'`, (err) => {
+
+                    if (err) {
+                        reject(err);
+                    } else {
+                        pool.getConnection((err, connection) => {
+
+                            if (err) {
+                                reject(err);
+                            } else {
+                                connection.query(`select * from usuario where id_usu='${id}'`, (err, res) => {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        let datos = undefined;
+
+                                        for (usuario of res) {
+                                            datos = {
+                                                id: usuario.id_usu,
+                                                nombreCompleto: `${decifrar(usuario.app_usu)} ${decifrar(usuario.apm_usu)} ${decifrar(usuario.nom_usu)}`,
+                                                nombre: decifrar(usuario.nom_usu),
+                                                appaterno: decifrar(usuario.app_usu),
+                                                apmaterno: decifrar(usuario.apm_usu),
+                                                username: usuario.usus_usu,
+                                                correo: decifrar(usuario.cor_usu),
+                                                privilegios: usuario.id_pri
+                                            }
+                                        }
+                                        resolve(datos);
+                                    }
+                                });
+                            }
+
+                            connection.release();
+                        });
+                    }
+                });
+            }
+
+            connection.release();
+        });
+    });
+}
+
+
+const verificarPassword = (id, password) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select * from usuario where id_usu=${id}`, (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        if (decifrar(res[0].pas_usu) === password) {
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    }
+                })
+            }
+
+            connection.release();
+        });
+    });
+}
+
+const actualizarPassword = (id, password) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {
+                connection.query(`update usuario set pas_usu='${cifrar(password)}' where id_usu=${id}`, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve("Contraseña actualizada");
+                    }
+                });
+            }
+            connection.release();
+        });
+    });
+}
+
+
+const obtenerUsuarios = (id) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {
+                connection.query(`select * from usuario where id_usu!=${id}`, (err, res) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        let usuarios = [];
+                        let datos = {};
+
+                        for (usuario of res) {
+
+                            if (usuario.id_pri == 1) {
+                                datos = {
+                                    id: usuario.id_usu,
+                                    nombreCompleto: `${decifrar(usuario.app_usu)} ${decifrar(usuario.apm_usu)} ${decifrar(usuario.nom_usu)}`,
+                                    nombre: decifrar(usuario.nom_usu),
+                                    appaterno: decifrar(usuario.app_usu),
+                                    apmaterno: decifrar(usuario.apm_usu),
+                                    username: usuario.usus_usu,
+                                    correo: decifrar(usuario.cor_usu),
+                                    privilegios: "Administrador",
+                                    intocable: true
+                                }
+                            } else if (usuario.id_pri == 2) {
+                                datos = {
+                                    id: usuario.id_usu,
+                                    nombreCompleto: `${decifrar(usuario.app_usu)} ${decifrar(usuario.apm_usu)} ${decifrar(usuario.nom_usu)}`,
+                                    nombre: decifrar(usuario.nom_usu),
+                                    appaterno: decifrar(usuario.app_usu),
+                                    apmaterno: decifrar(usuario.apm_usu),
+                                    username: usuario.usus_usu,
+                                    correo: decifrar(usuario.cor_usu),
+                                    privilegios: "Usuario"
+                                }
+                            }
+
+                            usuarios.push(datos);
+                            datos = {};
+
+                        }
+
+                        resolve(usuarios);
+                    }
+
+
+                });
+            }
+            connection.release();
+        });
+    });
+}
+
+
+
+const eliminarUsuario = (id) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`delete from usuario where id_usu=${id}`, (err) => {
+                    if (err) {
+                        reject("No es posible eliminar a este usuario, para más detalles entrar en contacto con desarrolladores");
+                    } else {
+                        resolve("Usuario eliminado");
+                    }
+                });
+            }
+
+            connection.release();
+        });
+    });
+}
+
+
+const obtenerUsuarioById = (id) => {
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select * from usuario where id_usu=${id}`, (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        if (res[0] == undefined) {
+                            reject(false);
+                        } else {
+                            let datos = {
+                                nombreCompleto: `${decifrar(res[0].app_usu)} ${decifrar(res[0].apm_usu)} ${decifrar(res[0].nom_usu)}`,
+                                nombre: decifrar(res[0].nom_usu),
+                                appaterno: decifrar(res[0].app_usu),
+                                apmaterno: decifrar(res[0].apm_usu),
+                                username: res[0].usus_usu,
+                                correo: decifrar(res[0].cor_usu),
+                                privilegios: res[0].id_pri
+                            }
+
+                            resolve(datos);
+                        }
+                    }
+                });
+            }
+
+            connection.release();
+        });
+    });
+}
+
+
+
+const getUsuariosOrdenados = (id, filtro) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+
+
+            if (err) {
+                reject("Ha ocurrido un error inesperado, vuelve a intentarlo más tarde");
+            } else {
+
+
+
+                connection.query(`select * from usuario where id_usu!=${id}`, (err, res) => {
+
+
+                    if (err) {
+                        reject("Ha ocurrido un error inesperado, vuelve a intentarlo más tarde");
+                    } else {
+
+
+                        let resultados = [];
+                        let datos = {};
+
+                        for (usuario of res) {
+
+
+                            if (usuario.id_pri == 1) {
+                                datos = {
+                                    id: usuario.id_usu,
+                                    nombreCompleto: `${decifrar(usuario.app_usu)} ${decifrar(usuario.apm_usu)} ${decifrar(usuario.nom_usu)}`,
+                                    nombre: decifrar(usuario.nom_usu),
+                                    appaterno: decifrar(usuario.app_usu),
+                                    apmaterno: decifrar(usuario.apm_usu),
+                                    username: usuario.usus_usu,
+                                    correo: decifrar(usuario.cor_usu),
+                                    privilegios: "Administrador",
+                                    intocable: true
+                                }
+                            } else if (usuario.id_pri == 2) {
+                                datos = {
+                                    id: usuario.id_usu,
+                                    nombreCompleto: `${decifrar(usuario.app_usu)} ${decifrar(usuario.apm_usu)} ${decifrar(usuario.nom_usu)}`,
+                                    nombre: decifrar(usuario.nom_usu),
+                                    appaterno: decifrar(usuario.app_usu),
+                                    apmaterno: decifrar(usuario.apm_usu),
+                                    username: usuario.usus_usu,
+                                    correo: decifrar(usuario.cor_usu),
+                                    privilegios: "Usuario"
+                                }
+                            }
+
+                            resultados.push(datos);
+                            datos = {};
+
+                        }
+
+
+
+
+                        if (filtro === "Por apellido(ascendente)") {
+                            let resultadosOrdenados = [];
+
+                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                if (a.appaterno > b.appaterno) {
+                                    return 1;
+                                }
+                                if (a.appaterno < b.appaterno) {
+                                    return -1;
+                                }
+                                // a must be equal to b
+                                return 0;
+                            });
+
+                            resolve(resultadosOrdenados);
+
+
+                        } else if (filtro === "Por apellido(descendente)") {
+
+                            let resultadosOrdenados = [];
+
+                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                if (a.appaterno < b.appaterno) {
+                                    return 1;
+                                }
+                                if (a.appaterno > b.appaterno) {
+                                    return -1;
+                                }
+                                // a must be equal to b
+                                return 0;
+                            });
+
+                            resolve(resultadosOrdenados);
+
+                        } else if (filtro === "Por nombre de usuario(ascendente)") {
+
+                            let resultadosOrdenados = [];
+
+                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                if (a.username > b.username) {
+                                    return 1;
+                                }
+                                if (a.username < b.username) {
+                                    return -1;
+                                }
+                                // a must be equal to b
+                                return 0;
+                            });
+
+                            resolve(resultadosOrdenados);
+
+                        } else if (filtro === "Por nombre de usuario(descendente)") {
+
+                            let resultadosOrdenados = [];
+
+                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                if (a.username < b.username) {
+                                    return 1;
+                                }
+                                if (a.username > b.username) {
+                                    return -1;
+                                }
+                                // a must be equal to b
+                                return 0;
+                            });
+
+                            resolve(resultadosOrdenados);
+
+
+                        } else if (filtro === "Solo usuarios") {
+
+                            let resultadosOrdenados = [];
+
+                            for (usuario of resultados) {
+                                if (usuario.privilegios === "Usuario") {
+                                    resultadosOrdenados.push(usuario);
+                                }
+                            }
+
+                            resolve(resultadosOrdenados);
+                        } else if (filtro === "Solo admins") {
+
+                            let resultadosOrdenados = [];
+
+                            for (usuario of resultados) {
+                                if (usuario.privilegios === "Administrador") {
+                                    resultadosOrdenados.push(usuario);
+                                }
+                            }
+                            resolve(resultadosOrdenados);
+                        } else if (filtro === "Sin filtro") {
+                            resolve(undefined)
+                        } else {
+
+                            reject("Filtro no encontrado");
+                        }
+
+
+
+
+                    }
+
+                });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+            connection.release();
+        });
+
+
+    });
+}
+
+const obtenerDatosSueldo = (id) => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject({})
+            } else {
+                connection.query(`select * from datosusu where id_usu=${id}`, (err, res) => {
+
+                    if (err) {
+                        reject({})
+                    } else {
+                        resolve(res[res.length - 1]);
+                    }
+                })
+            }
+
+            connection.release();
+        });
+
+    });
+}
+
+const guardarDatosSalario = (data, id) => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+
+            if (err) {
+                reject(err);
+            } else {
+                let fecha = new Date();
+                connection.query(` insert into datosusu(sue_dat,hor_dat,dia_dat,fec_dat,id_usu) values(${data.sueldo},${data.horas},${data.dias},'${fecha.getFullYear()}-${fecha.getMonth()+1}-${fecha.getDate()}',${id})`, (err) => {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                    } else {
+                        resolve("Datos guardados");
+                    }
+                })
+            }
+
+            connection.release();
+        })
+    });
+}
+
+
+const guardarDatosGastos = (data, id, cba) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err)
+            } else {
+
+
+                pool.getConnection((err, connection) => {
+
+                    if (err) {
+                        reject(err)
+                    } else {
+                        connection.query(`select * from presupuesto where id_usu=${id}`, (err, res) => {
+                            if (err) {
+                                reject(err);
+                            } else {
+
+                                if (res[0]) {
+                                    pool.getConnection((err, connection) => {
+
+                                        if (err) {
+                                            reject(err)
+                                        } else {
+                                            connection.query(`update presupuesto set tra_prs=${data.transporte},ser_prs=${data.servicios},
+                                                            pat_prs=${data.tarjetas},ren_prs=${data.renta},deu_prs=${data.deudas}, seg_prs=${data.seguros},
+                                                            cba_prs=${cba},otr_prs=${data.otros} where id_usu=${id}`, (err) => {
+                                                if (err) {
+                                                    reject(err)
+                                                } else {
+                                                    resolve("Datos guardados");
+                                                }
+                                            });
+                                        }
+                                        connection.release();
+                                    });
+                                } else {
+                                    connection.query(`insert into presupuesto(tra_prs,ser_prs,pat_prs,ren_prs,deu_prs,seg_prs,cba_prs,otr_prs,id_usu)
+                                                values(${data.transporte},${data.servicios},${data.tarjetas},${data.renta},${data.deudas},${data.seguros},${cba},${data.otros},${id})`, (err) => {
+                                        if (err) {
+                                            reject(err)
+                                        } else {
+                                            resolve("Datos guardados");
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                    }
+
+                    connection.release();
+                });
+
+
+
+
+
+            }
+            connection.release();
+        })
+    })
+
+}
+
+
+const obtenerPrecioCanastaBasica = () => {
+
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query("select * from precio where id_pro=38", (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(res[res.length - 1]);
+                    }
+                })
+            }
+            connection.release();
+        });
+    });
+
+}
+
+const obtenerDatosGastos = (id) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject({});
+            } else {
+                connection.query(`select * from presupuesto where id_usu=${id}`, (err, res) => {
+                    if (err) {
+                        reject({})
+                    } else {
+                        let result = res[0];
+                        if (result) {
+
+                            let data = {
+
+                                transporte: result.tra_prs,
+                                servicios: result.ser_prs,
+                                tarjetas: result.pat_prs,
+                                renta: result.ren_prs,
+                                deudas: result.deu_prs,
+                                seguros: result.seg_prs,
+                                otros: result.otr_prs,
+                                cba: result.cba_prs
+
+                            }
+                            resolve(data);
+                        } else {
+                            reject({});
+                        }
+
+                    }
+                })
+            }
+
+            connection.release();
+        })
+    });
+}
+
+
+
+const obtenerHorasParaCBA = (id) => {
+
+    return new Promise((resolve, reject) => {
+
+        obtenerPrecioCanastaBasica().then(msg1 => {
+
+            let precioCanastaBasica = msg1.can_pre;
+
+            obtenerDatosSueldo(id).then(msg2 => {
+                let datosSueldo = msg2;
+
+                let sueldoPorHora = ((datosSueldo.sue_dat) / ((datosSueldo.hor_dat) * (datosSueldo.dia_dat) * (4)));
+
+                let horasNecesarias = precioCanastaBasica / sueldoPorHora;
+
+                resolve({
+                    ok: true,
+                    horas: horasNecesarias
+                });
+
+            }).catch(err => {
+
+                reject({
+                    ok: false
+                });
+            })
+
+
+        }).catch(err => {
+
+            reject({
+                ok: false
+            });
+        });
+
+
+
+
+
+    });
+}
+
+
+
+const obtenerHorasParaGastos = (id) => {
+    return new Promise((resolve, reject) => {
+
+        obtenerDatosGastos(id).then(msg1 => {
+
+            let precioGastos = msg1.transporte + msg1.servicios + msg1.tarjetas + msg1.renta + msg1.deudas + msg1.seguros + msg1.otros + msg1.cba;
+
+            obtenerDatosSueldo(id).then(msg2 => {
+                let datosSueldo = msg2;
+
+                let sueldoPorHora = ((datosSueldo.sue_dat) / ((datosSueldo.hor_dat) * (datosSueldo.dia_dat) * (4)));
+
+                let horasNecesarias = precioGastos / sueldoPorHora;
+
+                resolve({
+                    ok: true,
+                    horas: horasNecesarias
+                });
+
+            }).catch(err => {
+
+                reject({
+                    ok: false
+                });
+            })
+
+
+        }).catch(err => {
+
+            reject({
+                ok: false
+            });
+        });
+
+
+
+
+
+    });
+}
+
+
+
+
+module.exports = {
+    probarConexion,
+    validarCorreo,
+    agregarUsuario,
+    validarUsername,
+    iniciarSesion,
+    actualizarDatosUsuario,
+    verificarPassword,
+    actualizarPassword,
+    obtenerUsuarios,
+    eliminarUsuario,
+    obtenerUsuarioById,
+    getUsuariosOrdenados,
+    obtenerDatosSueldo,
+    guardarDatosSalario,
+    guardarDatosGastos,
+    obtenerPrecioCanastaBasica,
+    obtenerDatosGastos,
+    obtenerHorasParaCBA,
+    obtenerHorasParaGastos
+
+};

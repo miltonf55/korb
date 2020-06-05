@@ -1,0 +1,88 @@
+{{>head}}
+{{>navbarinicio}}
+<br>
+
+<h1 align="center">Registro</h1><br>
+
+
+
+
+
+
+
+
+<div align="center">
+
+<div class="signin" align="center">
+	{{#if Mensaje}}
+<div class="alert alert-danger" role="alert">
+  {{Mensaje}}
+</div>
+{{/if}}
+
+<form method="post" action="/registro">
+	
+	<table cellpadding="10">
+		<tr>
+			
+			<td>
+    			<input name="nombre" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre(s)" {{#if Datos.nombre}}value='{{Datos.nombre}}'{{/if}}>
+			</td>
+			
+			<td>
+    			<input name="appaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Paterno"
+    			{{#if Datos.appaterno}}value='{{Datos.appaterno}}'{{/if}}>
+			</td>
+			
+			<td>
+    			<input name="apmaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Materno"
+    			{{#if Datos.apmaterno}}value='{{Datos.apmaterno}}'{{/if}}>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="correo" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Correo Electrónico" {{#if Datos.correo}}value='{{Datos.correo}}'{{/if}}>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre de Usuario" {{#if Datos.username}}value='{{Datos.username}}'{{/if}}>
+				
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contraseña"
+				{{#if Datos.password}}value='{{Datos.password}}'{{/if}}> 
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="password2" type="password" class="form-control" id="exampleInputPassword1" placeholder="Confirmar Contraseña"
+				{{#if Datos.password2}}value='{{Datos.password2}}'{{/if}}> 
+			</td>
+			
+			
+			
+		</tr>
+		<tr>
+			<td colspan="4" align="center">
+				<div class="form-group form-check">
+    				<input name="terminos" type="checkbox" class="form-check-input" id="exampleCheck1">
+    				<small class="form-check-label" for="exampleCheck1">Eh leído y acepto los <a href="terminos">Términos y Condiciones de Uso</a></small>
+  				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<button type="submit" class="btn btn-primary btn-block ">Registrarse</button>
+			</td>
+		</tr>
+		
+	</table>
+</form>
+</div>
+</div>
+
+
+{{>footerinicio}}

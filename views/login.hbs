@@ -1,0 +1,40 @@
+{{>head}}
+{{>navbarinicio}}
+<br>
+<h1 align="center">Inicio de Sesión</h1><br>
+<div align="center">
+<div class="login" align="left">
+{{#if RegistroUsuario}}
+  <div class="alert alert-success" role="alert">
+  Usuario registrado, ahora puedes iniciar sesión
+</div>
+{{/if}}
+
+{{#if InicioSesionFallido}}
+<div class="alert alert-danger" role="alert">
+  {{InicioSesionFallido}}
+</div>
+{{/if}}
+
+<form method="post" action="/login">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Correo Electrónico</label>
+    <input name="correo" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="algo@algo.com" {{#if CorreoLogin}}value='{{CorreoLogin}}'{{/if}}>
+    
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Contraseña</label>
+    <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="**********"> 
+    <small id="emailHelp" class="form-text text-muted">¿Aun no tienes una cuenta? <a href="/registro">Registrate</a></small>
+
+  </div>
+	
+
+  <button type="submit" class="btn btn-primary btn-block ">Entrar</button>
+</form>
+</div>
+</div>
+
+
+
+{{>footerinicio}}
