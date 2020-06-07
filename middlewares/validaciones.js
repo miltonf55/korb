@@ -75,6 +75,20 @@ function validarDecimal(valor) {
 
 }
 
+function validarDecimal2(valor) {
+    if (valor.length > 6 && !valor.includes(".")) {
+        return false;
+    } else {
+        var RE = /^\d{0,4}(\.\d{1})?\d{0,1}$/;
+        if (RE.test(valor)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+}
+
 function validarEntero(numero) {
     if (numero % 1 == 0) {
         return true;
@@ -90,5 +104,6 @@ module.exports = {
     alphaNumC,
     escritura,
     validarDecimal,
-    validarEntero
+    validarEntero,
+    validarDecimal2
 };

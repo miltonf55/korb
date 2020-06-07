@@ -37,6 +37,9 @@ app.use(require("./rutas-foro.js"));
 //Instanciar rutas de salario
 app.use(require("./rutas-salario.js"));
 
+//Instanciar rutas de administración de precios
+app.use(require("./rutas-precios.js"))
+
 
 
 

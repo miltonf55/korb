@@ -71,7 +71,7 @@ app.post("/guardarDatosSalario", autenticacion, (req, res) => {
             mensaje: "Solo valores numéricos"
         });
 
-    } else if (!validaciones.validarDecimal(data.sueldo) || parseInt(data.sueldo, 10) <= 0) {
+    } else if (!validaciones.validarDecimal(data.sueldo) || parseFloat(data.sueldo) < 0) {
 
         res.json({
             ok: false,

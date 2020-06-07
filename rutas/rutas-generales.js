@@ -22,7 +22,10 @@ const app = express();
 
 
 
+app.get("/activaJS", (req, res) => {
 
+    res.send("<div align='center'><br><br><font color='red'><h1 align='center'>Para poder usar ésta página activa JavaScript y regresa a la página anterior</div>");
+});
 
 
 app.get("/", autenticacionInversa, (req, res) => {

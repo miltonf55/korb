@@ -803,6 +803,153 @@ const obtenerHorasParaGastos = (id) => {
 
 
     });
+};
+
+
+const obtenerPrecios = () => {
+
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err);
+            } else {
+                connection.query("select * from precio", (err, res) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        let resultados = [];
+                        let data = {}
+                        for (precio of res) {
+                            data = {
+                                idProducto: precio.id_pro,
+                                precioProducto: precio.can_pre,
+                                fecha: new Date(precio.fec_pre)
+                            }
+                            resultados.push(data);
+                            data = {};
+                        }
+                        resolve(resultados);
+                    }
+                })
+            }
+            connection.release();
+        });
+
+
+    });
+
+};
+
+const obtenerUltimosPreciosdeProductos = () => {
+
+    return new Promise((resolve, reject) => {
+        let resultados = [];
+        let data = {};
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err)
+            } else {
+                connection.query("select * from precio where fec_pre =(select max(fec_pre) from precio) order by fec_pre", (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+
+                        for (precio of res) {
+                            data = {
+                                idProducto: precio.id_pro,
+                                precioProducto: precio.can_pre,
+                                fecha: new Date(precio.fec_pre)
+                            }
+                            resultados.push(data);
+                            data = {};
+                        }
+                        resolve(resultados);
+
+
+
+                    }
+
+
+
+                });
+            }
+            connection.release();
+        })
+
+    });
+};
+
+
+const obtenerProductos = () => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {
+                connection.query("select * from producto", (err, res) => {
+
+                    if (err) {
+                        reject(err)
+                    } else {
+                        let resultados = [];
+                        let data = {};
+
+                        for (producto of res) {
+                            data = {
+                                idProducto: producto.id_pro,
+                                nombreProducto: producto.nom_pro
+                            }
+                            resultados.push(data);
+                            data = {};
+                        }
+                        resolve(resultados);
+
+                    }
+
+                });
+            }
+        })
+    });
+}
+
+
+const guardarPrecios = (productos, fecha) => {
+
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err);
+            } else {
+                let query = `insert into precio(can_pre,fec_pre,id_pro) values`;
+
+                for (producto of productos) {
+                    if (producto.idProducto == productos[productos.length - 1].idProducto) {
+                        query += `(${producto.precioProducto},'${fecha}',${producto.idProducto});`
+                    } else {
+                        query += `(${producto.precioProducto},'${fecha}',${producto.idProducto}),`
+                    }
+
+                }
+                connection.query(query, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve("Datos Guardados");
+                    }
+                });
+
+
+            }
+
+            connection.release();
+
+        });
+    });
 }
 
 
@@ -827,6 +974,10 @@ module.exports = {
     obtenerPrecioCanastaBasica,
     obtenerDatosGastos,
     obtenerHorasParaCBA,
-    obtenerHorasParaGastos
+    obtenerHorasParaGastos,
+    obtenerPrecios,
+    obtenerUltimosPreciosdeProductos,
+    obtenerProductos,
+    guardarPrecios
 
 };
