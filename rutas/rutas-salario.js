@@ -28,11 +28,13 @@ app.get("/salario", autenticacion, (req, res) => {
     if (req.session.admin == 1) {
         res.render("salario", {
             TituloPagina: "Gestion de Salario",
-            Admin: "Si"
+            Admin: "Si",
+            script: "assets/js/app.js"
         });
     } else {
         res.render("salario", {
-            TituloPagina: "Gestion de Salario"
+            TituloPagina: "Gestion de Salario",
+            script: "assets/js/app.js"
         });
 
     }

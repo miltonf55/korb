@@ -21,10 +21,30 @@ const app = express();
 
 
 
+
+
 app.get("/foro", autenticacion, (req, res) => {
 
+    if (req.session.usuario == undefined) {
+        res.render("proyeccioneslogout", {
+            TituloPagina: "Proyecciones"
+        });
+    } else if (req.session.usuario != undefined) {
+        if (req.session.admin == 1) {
+            res.render("foro", {
+                TituloPagina: "Foro de Discusion",
+                Admin: "Si",
+                script: "assets/js/socket-cliente.js"
+            });
+        } else {
+            res.render("foro", {
+                TituloPagina: "Foro de Discusión",
+                script: "assets/js/socket-cliente.js"
+            });
+        }
 
-    res.send("Foro de discusión");
+    }
+
 });
 
 module.exports = app;

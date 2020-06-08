@@ -30,7 +30,8 @@ app.get("/proyecciones", (req, res) => {
         if (req.session.admin == 1) {
             res.render("proyeccioneslogin", {
                 TituloPagina: "Proyecciones",
-                Admin: "Si"
+                Admin: "Si",
+                script: "assets/js/app3.js"
             });
         } else {
             res.render("proyeccioneslogin", {

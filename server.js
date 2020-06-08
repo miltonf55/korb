@@ -8,7 +8,17 @@ const hbs = require("hbs");
 const express = require("express");
 const session = require("express-session");
 const body_parser = require('body-parser');
+
+//Socket
+const socketIO = require("socket.io");
+const http = require("http");
+
+
+
 const app = express();
+
+//Socket
+let server = http.createServer(app);
 
 
 //No se que es, pero ayuda a recuperar los datos del post
@@ -37,8 +47,11 @@ app.set("view engine", "hbs");
 //Asignar donde estan nuestras rutas
 app.use(require("./rutas/index.js"));
 
+//socket
+module.exports.io = socketIO(server);
+require("./sockets/socket.js");
+//socket
 
-
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
     console.log("Escuchando en ", process.env.PORT);
 });
