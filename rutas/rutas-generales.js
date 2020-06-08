@@ -37,29 +37,6 @@ app.get("/", autenticacionInversa, (req, res) => {
 });
 
 
-app.get("/proyecciones", (req, res) => {
-
-    if (req.session.usuario == undefined) {
-        res.render("proyeccioneslogout", {
-            TituloPagina: "Proyecciones"
-        });
-    } else if (req.session.usuario != undefined) {
-        if (req.session.admin == 1) {
-            res.render("proyeccioneslogin", {
-                TituloPagina: "Proyecciones",
-                Admin: "Si"
-            });
-        } else {
-            res.render("proyeccioneslogin", {
-                TituloPagina: "Proyecciones"
-            });
-        }
-
-    }
-
-});
-
-
 
 
 
