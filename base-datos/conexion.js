@@ -1,4 +1,4 @@
-const c = require('./dbConnection.js');
+const c = require('./confDB.js');
 
 //Conexión a la db
 var pool = c.Connect;
