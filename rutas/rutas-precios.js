@@ -56,7 +56,8 @@ app.get("/gestionPrecios", autenticacion, verificarPrivilegiosAdmin, (req, res) 
             res.render("precios", {
                 TituloPagina: "Gestion de Precios",
                 Admin: "Si",
-                Productos: productosConPrecios
+                Productos: productosConPrecios,
+                script: "assets/js/app2.js"
 
             });
         }).catch(err => {

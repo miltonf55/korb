@@ -1,5 +1,5 @@
 const letras = (checkStr) => {
-    var checkOk = "ABCDEFGHIJHKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + " ";
+    var checkOk = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + " ";
     var todovalido = true;
     for (i = 0; i < checkStr.length; i++) {
         ch = checkStr.charAt(i);
@@ -39,7 +39,7 @@ const alphaNumC = (checkStr) => {
     return todovalido;
 }
 const escritura = (checkStr) => {
-    var checkOk = "ABCDEFGHIJHKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "1234567890.¡?¿!<>#$%&()=,;:-_ ";
+    var checkOk = "ABCDEFGHIJHKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "1234567890.¡?¿!#$%&()=,;:-_ ";
     var todovalido = true;
     for (i = 0; i < checkStr.length; i++) {
         ch = checkStr.charAt(i);
@@ -53,10 +53,10 @@ const escritura = (checkStr) => {
             break;
         }
     }
-    if (checkStr.length < 1 || checkStr.length > 255) {
+    if (checkStr.length < 1 || checkStr.length > 1100) {
         todovalido = false;
     }
-    console.log(todovalido + " escribir");
+
     return todovalido;
 }
 
@@ -96,6 +96,8 @@ function validarEntero(numero) {
         return false;
     }
 }
+
+
 
 
 

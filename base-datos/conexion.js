@@ -960,6 +960,125 @@ const guardarPrecios = (productos, fecha) => {
     });
 }
 
+const obtenerTiposDePublicacion = () => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err);
+            } else {
+                connection.query("select * from tipopublicacion", (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(res)
+                    }
+                })
+            }
+            connection.release();
+        });
+
+    });
+}
+
+const guardarPublicacion = (data, id) => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`insert into publicacion(tit_pub,des_pub,fec_pub,hor_pub,min_pub,id_tip,id_usu,id_sta,vot_pub)
+                    values ('${data.titulo}','${data.descripcion}','${data.fecha}','${data.hora}','${data.minuto}',${data.idTipoPublicacion},${id},1,0)`, (err) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve("Publicación Guardada");
+                    }
+                });
+            }
+
+            connection.release();
+        });
+
+    });
+}
+
+
+const obtenerPublicacionesDeUsuario = (id) => {
+
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select * from publicacion where id_usu=${id}`, (err, res) => {
+
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                });
+            }
+
+
+            connection.release();
+        });
+    });
+
+}
+
+const eliminarPublicacion = (idPublicacion, idUsuario) => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select * from publicacion where id_pub=${idPublicacion} and id_usu=${idUsuario}`, (err, res) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        if (res[0] != undefined) {
+
+                            pool.getConnection((err, connection) => {
+
+                                if (err) {
+                                    reject(err)
+                                } else {
+                                    connection.query(`delete from publicacion where id_pub=${idPublicacion}`, (err) => {
+                                        if (err) {
+                                            reject(err)
+                                        } else {
+                                            resolve("Publicación Eliminada");
+                                        }
+                                    });
+                                }
+
+                                connection.release();
+                            });
+
+                        } else {
+                            reject("F")
+                        }
+                    }
+                });
+            }
+
+
+            connection.release();
+        });
+    });
+}
+
 
 
 
@@ -986,6 +1105,10 @@ module.exports = {
     obtenerPrecios,
     obtenerUltimosPreciosdeProductos,
     obtenerProductos,
-    guardarPrecios
+    guardarPrecios,
+    obtenerTiposDePublicacion,
+    guardarPublicacion,
+    obtenerPublicacionesDeUsuario,
+    eliminarPublicacion
 
 };
