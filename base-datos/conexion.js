@@ -1,3 +1,8 @@
+const c = require('./dbConnection.js');
+
+//Conexión a la db
+var pool = c.Connect;
+
 const {
     cifrar,
     decifrar
@@ -78,11 +83,7 @@ const validarUsername = (username) => {
 
 const agregarUsuario = (usuario) => {
     return new Promise((resolve, reject) => {
-        pool.getConnection((err, connection) => {
-            if (err) {
-                reject(err)
-            } else {
-
+       
                 connection.query(`insert into usuario (nom_usu,app_usu,apm_usu,usus_usu,pas_usu,cor_usu,id_pri) 
                     values('${usuario.nombre}','${usuario.appaterno}','${usuario.apmaterno}','${usuario.username}','${usuario.password}','${usuario.correo}',2)`, (err) => {
                     if (err) {
@@ -92,9 +93,8 @@ const agregarUsuario = (usuario) => {
                     }
                 });
 
-            }
-            connection.release();
-        });
+           
+     
     });
 }
 
