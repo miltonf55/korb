@@ -92,11 +92,6 @@ app.get("/registro", autenticacionInversa, (req, res) => {
 
 
 app.post("/registro", autenticacionInversa, (req, res) => {
-
-
-
-
-
     let Usuario = {
         nombre: req.body.nombre,
         appaterno: req.body.appaterno,
@@ -107,11 +102,6 @@ app.post("/registro", autenticacionInversa, (req, res) => {
         password2: req.body.password2
 
     }
-
-
-
-
-
 
     req.session.datosForm = Usuario;
 
@@ -148,7 +138,6 @@ app.post("/registro", autenticacionInversa, (req, res) => {
                         req.session.mensaje = "Debes aceptar los terminos y condiciones";
                         res.redirect("/registro");
                     } else {
-
                         Usuario.password = cifrar(Usuario.password);
                         Usuario.nombre = cifrar(Usuario.nombre);
                         Usuario.appaterno = cifrar(Usuario.appaterno.split(" ").join(""));

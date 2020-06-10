@@ -11,7 +11,7 @@ const {
 
 
 
-/*const probarConexion = () => {
+const probarConexion = () => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -22,7 +22,7 @@ const {
             connection.release();
         });
     });
-};*/
+};
 
 
 const validarCorreo = (correo) => {
@@ -83,18 +83,22 @@ const validarUsername = (username) => {
 
 const agregarUsuario = (usuario) => {
     return new Promise((resolve, reject) => {
-       
-                connection.query(`insert into usuario (nom_usu,app_usu,apm_usu,usus_usu,pas_usu,cor_usu,id_pri) 
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            } else {   
+                pool.query(`insert into usuario (nom_usu,app_usu,apm_usu,usus_usu,pas_usu,cor_usu,id_pri) 
                     values('${usuario.nombre}','${usuario.appaterno}','${usuario.apmaterno}','${usuario.username}','${usuario.password}','${usuario.correo}',2)`, (err) => {
                     if (err) {
+                        console.log(err);
                         reject(err)
                     } else {
                         resolve("Registrado");
                     }
                 });
-
-           
-     
+            }
+            connection.release();
+        });        
     });
 }
 
@@ -1066,7 +1070,7 @@ const eliminarPublicacion = (idPublicacion, idUsuario) => {
 
 
 module.exports = {
-    probarConexion,
+    //probarConexion,
     validarCorreo,
     agregarUsuario,
     validarUsername,

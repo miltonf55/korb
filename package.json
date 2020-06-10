@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "hbs": "^4.1.1",
     "mocha": "^7.2.0",
     "mysql": "^2.18.1",
+    "nodemon": "^2.0.4",
     "socket.io": "^2.3.0"
   }
 }
