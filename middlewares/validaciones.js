@@ -48,12 +48,15 @@ const escritura = (checkStr) => {
                 break;
             }
         }
-        if (j == checkOk.length) {
+
+        if (j == checkOk.length && ch != "\n") {
+
             todovalido = false;
             break;
         }
     }
-    if (checkStr.length < 1 || checkStr.length > 1100) {
+    if (checkStr.length < 1) {
+
         todovalido = false;
     }
 
