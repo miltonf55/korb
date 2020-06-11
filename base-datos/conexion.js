@@ -1100,7 +1100,7 @@ const numeroRegistradoProductos = (id) => {
             if (err) {
                 reject(err)
             } else {
-                connection.query(`select count(can_pre) from precio where id_pro=${id}`, (err, res) => {
+                connection.query(`select count(can_pre) AS regCount from precio where id_pro=${id}`, (err, res) => {
 
                     if (err) {
                         reject(err);
