@@ -47,6 +47,7 @@ const validarCorreo = (correo) => {
                         resolve(disponible);
                     }
                 });
+                
             }
             connection.release();
         });
