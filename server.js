@@ -55,3 +55,47 @@ require("./sockets/socket.js");
 server.listen(process.env.PORT, () => {
     console.log("Escuchando en ", process.env.PORT);
 });
+//IMPORTANTE: ESTOS METODOS PARA MANEJAR ERRORES VAN AL FINAL DE TODO
+//Erro 404, page not found
+app.use(function(req, res, next) {
+    if (req.session.usuario == undefined) {
+        res.status(404).render("error404logout", {
+            TituloPagina: "Error 404"
+        });
+    } else if (req.session.usuario != undefined) {
+        if (req.session.admin == 1) {
+            res.status(404).render("error404login", {
+                TituloPagina: "Error 404",
+                Admin: "Si",
+                script: "assets/js/app3.js"
+            });
+        } else {
+            res.status(404).render("error404login", {
+                TituloPagina: "Error 404"
+            });
+        }
+
+    }
+});
+//error 500, algo esta mal con la app y se murio jsjsjsjs
+app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    if (req.session.usuario == undefined) {
+        res.status(404).render("error500logout", {
+            TituloPagina: "Error 500"
+        });
+    } else if (req.session.usuario != undefined) {
+        if (req.session.admin == 1) {
+            res.status(404).render("error500login", {
+                TituloPagina: "Error 500",
+                Admin: "Si",
+                script: "assets/js/app3.js"
+            });
+        } else {
+            res.status(404).render("error500login", {
+                TituloPagina: "Error 500"
+            });
+        }
+
+    }
+});
