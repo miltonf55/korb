@@ -1,0 +1,54 @@
+{{>head}}
+{{>navbar}}
+<br><br>
+<div align="center">
+<h1>Modificar Datos de Usuario</h1>
+<br>
+<div class="datoscuenta" align="center">
+	
+	{{#if alertaAdminModificarDatos}}
+	<div class="alert alert-danger" role="alert">
+		{{alertaAdminModificarDatos}}
+	</div>
+	{{/if}}
+
+	<form method="post" action="/guardarModificaciones">
+<table cellpadding="10">
+		<tr>
+			
+			<td>
+    			<input name="nombre" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre(s)" {{#if Datos.nombre}}value='{{Datos.nombre}}'{{/if}}>
+			</td>
+			
+			<td>
+    			<input name="appaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Paterno"
+    			{{#if Datos.appaterno}}value='{{Datos.appaterno}}'{{/if}}>
+			</td>
+			
+			<td>
+    			<input name="apmaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Materno"
+    			{{#if Datos.apmaterno}}value='{{Datos.apmaterno}}'{{/if}}>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="correo" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Correo Electrónico" {{#if Datos.correo}}value='{{Datos.correo}}'{{/if}}>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre de Usuario" {{#if Datos.username}}value='{{Datos.username}}'{{/if}}>
+				
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<button type="submit" class="btn btn-primary btn-block ">Guardar Cambios</button>
+			</td>
+		</tr>
+		
+	</table>
+</form>
+</div>
+</div>
+{{>footer}}
