@@ -3,6 +3,7 @@ const express = require("express");
 const session = require("express-session");
 const db = require("../base-datos/conexion.js");
 const validaciones = require("../middlewares/validaciones.js");
+const pr = require("../middlewares/proyeccion.js");
 
 const {
     autenticacion,
@@ -43,8 +44,13 @@ app.get("/proyecciones", (req, res) => {
 
 });
 app.post("/proyecciones", autenticacionInversa,(req, res) => {
-    console.log(req.body.canastaSelect);
-    console.log(req.body.date);
+    let idPro=req.body.canastaSelect;
+    let date=req.body.date;
+    db.numeroRegistradoProductos(idPro).then(datos => {
+        var xN=datos;
+        pr.valoresProyeccion(xN);
+    }).catch(console.log);
+    
     if (req.session.usuario == undefined) {
         res.render("proyeccioneslogout", {
             TituloPagina: "Proyecciones"
