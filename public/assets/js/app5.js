@@ -1,5 +1,4 @@
 $(() => {
-    console.log("Hi");
     function proyeccionCB() {
         let d=dateN();
         let data = {
@@ -19,9 +18,13 @@ $(() => {
             }
         });
     }
+    $("#salarioForm").on("click", () => {
         proyeccionCB();
+        $("#salarioForm").addClass("btn btn-primary");
+        $("#gastosForm").removeClass("btn btn-primary")
+        $("#gastosForm").addClass("nav-link");
 
-        $("#proyecta").html(`<div class="input-group">
+        $("#formsContent").html(`<div class="input-group">
                 <select class="custom-select" id="canastaSelect" name="canastaSelect" aria-label="Example select with button addon">
                     <option selected value="38">Canasta básica</option>
                     <option value="1">Tortilla de maiz</option>
@@ -107,6 +110,7 @@ $(() => {
 
 
         });
+    });
     function dateN(){
         var fecha = new Date(); 
         var mes = fecha.getMonth()+1;
@@ -120,4 +124,5 @@ $(() => {
         console.log(f);
         return f;
     }
+    $("#salarioForm").click();
 });
