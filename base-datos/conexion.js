@@ -1,11 +1,7 @@
-const mysql = require("mysql");
-const pool = mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "n0m3l0",
-    database: "korbdb",
-    port: 3306
-});
+const c = require('./confDB.js');
+
+//Conexión a la db
+var pool = c.Connect;
 
 const {
     cifrar,
