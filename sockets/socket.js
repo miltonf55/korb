@@ -4,13 +4,6 @@ const {
 const db = require("../base-datos/conexion.js");
 io.on("connection", (client) => {
 
-    console.log("Usuario conectado");
-
-
-
-    client.on("disconnect", () => {
-        console.log("Usuario desconectado");
-    });
 
     // Escuchar el cliente
 
@@ -64,5 +57,17 @@ io.on("connection", (client) => {
 
         }).catch(console.log);
     });
+
+    client.on("nuevaPublicacion", (publicacion) => {
+        client.broadcast.emit("nuevaPublicacion", publicacion);
+        client.emit("nuevaPublicacion", publicacion);
+
+    })
+
+    client.on("guardarRetroalimentacion", (data) => {
+        console.log(data);
+        client.broadcast.emit("guardarRetroalimentacion", data);
+
+    })
 
 });

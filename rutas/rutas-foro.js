@@ -37,10 +37,10 @@ app.get("/foro", autenticacion, (req, res) => {
         });
     } else if (req.session.usuario != undefined) {
         if (req.session.admin == 1) {
-            res.render("foro", {
+            res.render("foro-admin", {
                 TituloPagina: "Foro de Discusion",
                 Admin: "Si",
-                script: "assets/js/app4.js"
+                script: "assets/js/app6.js"
             });
         } else {
             res.render("foro", {
@@ -123,13 +123,15 @@ app.post("/guardarPublicacion", autenticacion, (req, res) => {
                     idTipoPublicacion,
                     fecha: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`,
                     hora: `${new Date().getHours()}`,
-                    minuto: `${new Date().getMinutes()}`
+                    minuto: `${new Date().getMinutes()}`,
+                    username: req.session.usuario.username
                 }
 
                 db.guardarPublicacion(data, req.session.usuario.id).then(msg => {
                     res.json({
                         ok: true,
-                        mensaje: "La publicación ha sido subida, puedes verla en 'Mis Publicaciones' o en 'Todas las Publicaciones'"
+                        mensaje: "La publicación ha sido subida, puedes verla en 'Mis Publicaciones' o en 'Todas las Publicaciones'",
+                        publicacion: data
                     })
                 }).catch(err => {
                     console.log(err)
@@ -153,15 +155,25 @@ app.post("/guardarPublicacion", autenticacion, (req, res) => {
 
 });
 
-app.get("/obtenerMisPublicaciones", autenticacion, (req, res) => {
+app.post("/obtenerMisPublicaciones", autenticacion, (req, res) => {
+    let filtrosDeBusqueda = req.body.filtrosDeBusqueda2;
 
-    db.obtenerPublicacionesDeUsuario(req.session.usuario.id).then(data => {
+    if (filtrosDeBusqueda.filtroTipoPublicacion != "Sugerencias" && filtrosDeBusqueda.filtroTipoPublicacion != "BUGs" && filtrosDeBusqueda.filtroTipoPublicacion != "Errores") {
+        filtrosDeBusqueda.filtroTipoPublicacion = "";
+    }
+
+    if (filtrosDeBusqueda.filtroEstadoResolucion != "Resueltas" && filtrosDeBusqueda.filtroEstadoResolucion != "Sin Resolver") {
+        filtrosDeBusqueda.filtroEstadoResolucion = "";
+    }
+
+    db.obtenerPublicacionesDeUsuario(req.session.usuario.id, filtrosDeBusqueda).then(data => {
         res.json({
             ok: true,
             publicaciones: data,
             username: req.session.usuario.username
         });
     }).catch(err => {
+        console.log(err);
         res.json({
             ok: false,
             mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
@@ -186,20 +198,64 @@ app.post("/eliminarPublicacion", autenticacion, (req, res) => {
     });
 });
 
-app.get("/obtenerTodasLasPublicaciones", autenticacion, (req, res) => {
+app.post("/obtenerTodasLasPublicaciones", autenticacion, (req, res) => {
+    let filtrosDeBusqueda = req.body.filtrosDeBusqueda;
 
-    db.obtenerTodasLasPublicaciones(req.session.usuario.id).then(data => {
+    if (filtrosDeBusqueda.filtroTipoPublicacion != "Sugerencias" && filtrosDeBusqueda.filtroTipoPublicacion != "BUGs" && filtrosDeBusqueda.filtroTipoPublicacion != "Errores") {
+        filtrosDeBusqueda.filtroTipoPublicacion = "";
+    }
+
+    if (filtrosDeBusqueda.filtroEstadoResolucion != "Resueltas" && filtrosDeBusqueda.filtroEstadoResolucion != "Sin Resolver") {
+        filtrosDeBusqueda.filtroEstadoResolucion = "";
+    }
+
+
+
+
+    db.obtenerTodasLasPublicaciones(req.session.usuario.id, filtrosDeBusqueda).then(data => {
         res.json({
             ok: true,
             publicaciones: data
         });
     }).catch(err => {
+        console.log(err);
         res.json({
             ok: false,
             mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
         })
     })
 
+});
+
+app.post("/guardarRetroalimentacion", autenticacion, (req, res) => {
+    let idPublicacion = req.body.idPublicacion;
+    let retroalimentacionPublicacion = req.body.retroalimentacionPublicacion;
+
+    if (retroalimentacionPublicacion.split(" ").join("") == "") {
+        res.json({
+            ok: false,
+            mensaje: "No puedes mandar una respuesta en blanco"
+        });
+    } else if (!validaciones.escritura(retroalimentacionPublicacion)) {
+        res.json({
+            ok: false,
+            mensaje: "Solo se permiten los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! # $ % & ( ) = , ; : - _ "
+        })
+    } else {
+        db.guardarRetroalimentacion(idPublicacion, retroalimentacionPublicacion).then(msg => {
+
+            res.json({
+                ok: true,
+                idUsuario: msg[0].id_usu,
+                tituloPublicacion: msg[0].tit_pub
+            })
+        }).catch(err => {
+            res.json({
+                ok: false,
+                mensaje: "Ha ocurrido un erro inesperado, vuelve a intentarlo más tarde"
+            });
+        })
+    }
 });
 
 

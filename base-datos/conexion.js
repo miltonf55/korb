@@ -1,7 +1,16 @@
-const c = require('./confDB.js');
+/*const c = require('./confDB.js');
 
 //Conexión a la db
-var pool = c.Connect;
+var pool = c.Connect;*/
+
+const mysql = require("mysql");
+const pool = mysql.createPool({
+    host: "localhost",
+    user: "root",
+    password: "n0m3l0",
+    database: "korbdb",
+    port: 3306
+});
 
 const {
     cifrar,
@@ -1095,7 +1104,7 @@ const numeroRegistradoProductos = (id) => {
 
 
 
-const obtenerTodasLasPublicaciones = (idUsuario) => {
+const obtenerTodasLasPublicaciones = (idUsuario, filtros) => {
 
     return new Promise((resolve, reject) => {
 
@@ -1104,7 +1113,47 @@ const obtenerTodasLasPublicaciones = (idUsuario) => {
             if (err) {
                 reject(err)
             } else {
-                connection.query(`select * from publicacion order by id_pub desc`, (err, res) => {
+                let sql = `select * from publicacion `;
+                let {
+                    filtroTipoPublicacion,
+                    filtroEstadoResolucion,
+                    filtroVotos
+                } = filtros
+
+
+                if (filtroTipoPublicacion != "" || filtroEstadoResolucion != "") {
+                    sql += `where `
+                    if (filtroTipoPublicacion != "" && filtroEstadoResolucion != "") {
+
+                        if (filtroTipoPublicacion == "Sugerencias") {
+                            sql += `id_tip=1 and `
+                        } else if (filtroTipoPublicacion == "BUGs") {
+                            sql += `id_tip=2 and `
+                        } else if (filtroTipoPublicacion == "Errores") {
+                            sql += `id_tip=3 and `
+                        }
+
+                    } else if (filtroTipoPublicacion != "") {
+
+                        if (filtroTipoPublicacion == "Sugerencias") {
+                            sql += `id_tip=1 `
+                        } else if (filtroTipoPublicacion == "BUGs") {
+                            sql += `id_tip=2 `
+                        } else if (filtroTipoPublicacion == "Errores") {
+                            sql += `id_tip=3 `
+                        }
+                    }
+                    if (filtroEstadoResolucion != "") {
+                        if (filtroEstadoResolucion == "Resueltas") {
+                            sql += `id_sta=2 `
+                        } else if (filtroEstadoResolucion == "Sin Resolver") {
+                            sql += `id_sta=1 `
+                        }
+                    }
+
+                }
+
+                connection.query(`${sql}order by id_pub desc`, (err, res) => {
 
                     if (err) {
 
@@ -1155,7 +1204,7 @@ const obtenerTodasLasPublicaciones = (idUsuario) => {
 
                                                             for (usuario of usuarios) {
                                                                 if (usuario.id_usu == publicacion.id_usu) {
-                                                                    resultados.push(data = {
+                                                                    resultados.push({
                                                                         id_pub: publicacion.id_pub,
                                                                         tit_pub: publicacion.tit_pub,
                                                                         des_pub: publicacion.des_pub,
@@ -1173,12 +1222,67 @@ const obtenerTodasLasPublicaciones = (idUsuario) => {
                                                                     })
                                                                 }
                                                             }
+                                                            votosPositivos = 0;
+                                                            votosNegativos = 0;
+                                                            voto = undefined;
 
 
 
 
                                                         }
-                                                        resolve(resultados)
+                                                        let resultadosOrdenados = [];
+                                                        if (filtroVotos == "Por Me Gustas(Descendente)") {
+
+
+                                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                                if (a.votosPositivos < b.votosPositivos) {
+                                                                    return 1;
+                                                                }
+                                                                if (a.votosPositivos > b.votosPositivos) {
+                                                                    return -1;
+                                                                }
+                                                                // a must be equal to b
+                                                                return 0;
+                                                            });
+                                                        } else if (filtroVotos == "Por Me Gustas(Ascendente)") {
+                                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                                if (a.votosPositivos > b.votosPositivos) {
+                                                                    return 1;
+                                                                }
+                                                                if (a.votosPositivos < b.votosPositivos) {
+                                                                    return -1;
+                                                                }
+                                                                // a must be equal to b
+                                                                return 0;
+                                                            });
+                                                        } else if (filtroVotos == "Por No Me Gustas(Descendente)") {
+                                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                                if (a.votosNegativos < b.votosNegativos) {
+                                                                    return 1;
+                                                                }
+                                                                if (a.votosNegativos > b.votosNegativos) {
+                                                                    return -1;
+                                                                }
+                                                                // a must be equal to b
+                                                                return 0;
+                                                            });
+
+                                                        } else if (filtroVotos == "Por No Me Gustas(Ascendente)") {
+                                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                                if (a.votosNegativos > b.votosNegativos) {
+                                                                    return 1;
+                                                                }
+                                                                if (a.votosNegativos < b.votosNegativos) {
+                                                                    return -1;
+                                                                }
+                                                                // a must be equal to b
+                                                                return 0;
+                                                            });
+
+                                                        } else {
+                                                            resultadosOrdenados = resultados;
+                                                        }
+                                                        resolve(resultadosOrdenados)
                                                     }
                                                 });
                                             }
@@ -1202,7 +1306,7 @@ const obtenerTodasLasPublicaciones = (idUsuario) => {
     });
 }
 
-const obtenerPublicacionesDeUsuario = (id) => {
+const obtenerPublicacionesDeUsuario = (id, filtros) => {
 
     return new Promise((resolve, reject) => {
 
@@ -1211,7 +1315,37 @@ const obtenerPublicacionesDeUsuario = (id) => {
             if (err) {
                 reject(err)
             } else {
-                connection.query(`select * from publicacion where id_usu=${id} order by id_pub desc`, (err, res) => {
+
+                let sql = `select * from publicacion where `;
+                let {
+                    filtroTipoPublicacion,
+                    filtroEstadoResolucion,
+                    filtroVotos
+                } = filtros
+
+
+                if (filtroTipoPublicacion != "") {
+
+                    if (filtroTipoPublicacion == "Sugerencias") {
+                        sql += `id_tip=1 and `
+                    } else if (filtroTipoPublicacion == "BUGs") {
+                        sql += `id_tip=2 and `
+                    } else if (filtroTipoPublicacion == "Errores") {
+                        sql += `id_tip=3 and `
+                    }
+                }
+
+                if (filtroEstadoResolucion != "") {
+                    if (filtroEstadoResolucion == "Resueltas") {
+                        sql += `id_sta=2 and `
+                    } else if (filtroEstadoResolucion == "Sin Resolver") {
+                        sql += `id_sta=1 and `
+                    }
+                }
+
+
+
+                connection.query(`${sql}id_usu=${id} order by id_pub desc`, (err, res) => {
 
                     if (err) {
                         reject(err);
@@ -1234,7 +1368,7 @@ const obtenerPublicacionesDeUsuario = (id) => {
                                         let votosNegativos = 0;
                                         let voto = undefined;
                                         for (publicacion of publicacionesNormales) {
-                                            data = {}
+
                                             for (votos of res2) {
                                                 if (publicacion.id_pub == votos.id_pub && votos.est_vot == 2) {
                                                     votosPositivos++;
@@ -1250,7 +1384,8 @@ const obtenerPublicacionesDeUsuario = (id) => {
                                             }
 
 
-                                            resultados.push(data = {
+
+                                            resultados.push({
                                                 id_pub: publicacion.id_pub,
                                                 tit_pub: publicacion.tit_pub,
                                                 des_pub: publicacion.des_pub,
@@ -1265,9 +1400,66 @@ const obtenerPublicacionesDeUsuario = (id) => {
                                                 votosNegativos,
                                                 voto
                                             })
+                                            votosPositivos = 0;
+                                            votosNegativos = 0;
+                                            voto = undefined;
 
                                         }
-                                        resolve(resultados)
+
+                                        let resultadosOrdenados = [];
+                                        if (filtroVotos == "Por Me Gustas(Descendente)") {
+
+
+                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                if (a.votosPositivos < b.votosPositivos) {
+                                                    return 1;
+                                                }
+                                                if (a.votosPositivos > b.votosPositivos) {
+                                                    return -1;
+                                                }
+                                                // a must be equal to b
+                                                return 0;
+
+                                            });
+
+                                        } else if (filtroVotos == "Por Me Gustas(Ascendente)") {
+                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                if (a.votosPositivos > b.votosPositivos) {
+                                                    return 1;
+                                                }
+                                                if (a.votosPositivos < b.votosPositivos) {
+                                                    return -1;
+                                                }
+                                                // a must be equal to b
+                                                return 0;
+                                            });
+                                        } else if (filtroVotos == "Por No Me Gustas(Descendente)") {
+                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                if (a.votosNegativos < b.votosNegativos) {
+                                                    return 1;
+                                                }
+                                                if (a.votosNegativos > b.votosNegativos) {
+                                                    return -1;
+                                                }
+                                                // a must be equal to b
+                                                return 0;
+                                            });
+                                        } else if (filtroVotos == "Por No Me Gustas(Ascendente)") {
+                                            resultadosOrdenados = resultados.sort(function (a, b) {
+                                                if (a.votosNegativos > b.votosNegativos) {
+                                                    return 1;
+                                                }
+                                                if (a.votosNegativos < b.votosNegativos) {
+                                                    return -1;
+                                                }
+                                                // a must be equal to b
+                                                return 0;
+                                            });
+
+                                        } else {
+                                            resultadosOrdenados = resultados;
+                                        }
+                                        resolve(resultadosOrdenados)
                                     }
                                 });
                             }
@@ -1431,7 +1623,7 @@ const obtenerVotosPublicacion = (idPublicacion) => {
             if (err) {
                 reject(err)
             } else {
-                connection.query(`select * from votos where id_pub=${idPublicacion}`, (err, res) => {
+                connection.query(`select * from votos where id_pub=${idPublicacion} `, (err, res) => {
                     if (err) {
                         reject(err)
                     } else {
@@ -1452,6 +1644,36 @@ const obtenerVotosPublicacion = (idPublicacion) => {
                 });
             }
 
+            connection.release();
+        });
+    });
+}
+
+const guardarRetroalimentacion = (idPublicacion, retroalimentacionPublicacion) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`update publicacion set ret_pub='${retroalimentacionPublicacion} <br><br><b> En caso de que el problema continue, puede volver a hacer una publicación o mandar un correo a (Correo de Korb)</b>', id_sta=2 where id_pub=${idPublicacion}`, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        pool.getConnection((err, connection) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                connection.query(`select id_usu,tit_pub from publicacion where id_pub=${idPublicacion}`, (err, res) => {
+
+                                    resolve(res);
+                                });
+                            }
+                            connection.release();
+                        })
+
+                    }
+                });
+            }
             connection.release();
         });
     });
@@ -1492,6 +1714,7 @@ module.exports = {
     obtenerPublicacionesDeUsuario,
     darLikeAPublicacion,
     darDislikeAPublicacion,
-    obtenerVotosPublicacion
+    obtenerVotosPublicacion,
+    guardarRetroalimentacion
 
 };

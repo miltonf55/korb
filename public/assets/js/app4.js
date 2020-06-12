@@ -8,24 +8,7 @@ $(() => {
 
 
 
-    /*
-    socket.on("enviarMensaje", (mensaje) => {
-        console.log("Servidor:");
-        console.log(mensaje);
-    });*/
-
-    //Emits son para enviar información
-
-    /*
-    socket.emit("enviarMensaje", {
-            usuario: "Aaron",
-            mensaje: "Hola Mundo"
-        },
-        (respuesta) => {
-            console.log(respuesta);
-        });}
-        */
-
+    let k = true;
 
 
 
@@ -33,7 +16,7 @@ $(() => {
 
     //JQuery
     $("#hacerPublicacion").on("click", () => {
-
+        k = false;
         $("#hacerPublicacion").addClass("btn btn-primary");
         $("#misPublicaciones").removeClass("btn btn-primary")
         $("#misPublicaciones").addClass("nav-link");
@@ -142,6 +125,7 @@ $(() => {
                                 if (!data.ok) {
                                     $("#mensajes").html(`<div class='alert alert-danger'>${data.mensaje}</div>`);
                                 } else {
+                                    socket.emit("nuevaPublicacion", data.publicacion);
                                     $("#mensajes").html(`<div class='alert alert-success'>${data.mensaje}</div>`);
                                     $("#tituloPublicacion").val("");
                                     $("#descripcionPublicacion").val("");
@@ -166,8 +150,14 @@ $(() => {
 
     });
 
-    $("#misPublicaciones").on("click", () => {
+    let filtrosDeBusqueda2 = {
+        filtroTipoPublicacion: "",
+        filtroEstadoResolucion: "",
+        filtroVotos: "Por Me Gustas(Descendente)"
+    };
 
+    $("#misPublicaciones").on("click", () => {
+        k = false;
         $("#misPublicaciones").addClass("btn btn-primary");
         $("#todasLasPublicaciones").removeClass("btn btn-primary")
         $("#todasLasPublicaciones").addClass("nav-link");
@@ -177,12 +167,19 @@ $(() => {
 
         $.ajax({
             url: "/obtenerMisPublicaciones",
+            method: "POST",
+            data: {
+                filtrosDeBusqueda2
+            },
             success: (data) => {
                 if (!data.ok) {
                     $("#publicacionesContent").html(`<h3>Mis Publicaciones</h3><br>
                         
                             <div class="alert alert-danger" role="alert">${data.mensaje}</div>`)
                 } else {
+
+
+
 
 
                     if (data.publicaciones.length == 0) {
@@ -204,6 +201,7 @@ $(() => {
                             let estadoPublicacionEscrito = "";
                             let fechaEscrita = "";
                             let voto = "";
+
                             if (publicacion.voto == undefined) {
                                 voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
                                                         </td>
@@ -296,7 +294,7 @@ $(() => {
                             if (publicacion.ret_pub != null) {
                                 html += `<tr>
                                                     <td colspan="3">
-                                                        Comentarios del Desarrollador: ${publicacion.ret_pub}
+                                                        <b>Comentarios del Desarrollador:</b><br> ${publicacion.ret_pub}
                                                     </td>
                                                 </tr>`
                             }
@@ -351,6 +349,7 @@ $(() => {
                                             $("#mensajes").html(`<div class="alert alert-danger" role="alert" align='center'>${msg.mensaje}</div>`)
                                         } else {
                                             $("#misPublicaciones").click();
+                                            socket.emit("nuevaPublicacion", {});
                                             alert(`${msg.mensaje}`);
 
                                         }
@@ -372,11 +371,12 @@ $(() => {
                             url: "/obtenerIdUsuario",
                             success: (id) => {
                                 for (publicacion of data.publicaciones) {
+                                    let idPublicacion = publicacion.id_pub;
                                     $(`#like${publicacion.id_pub}`).off();
                                     $(`#like${publicacion.id_pub}`).on("click", () => {
 
                                         socket.emit("like", {
-                                            idPublicacion: publicacion.id_pub,
+                                            idPublicacion,
                                             idUsuario: id.idUsuario
                                         });
 
@@ -385,7 +385,7 @@ $(() => {
                                     $(`#dislike${publicacion.id_pub}`).on("click", () => {
 
                                         socket.emit("dislike", {
-                                            idPublicacion: publicacion.id_pub,
+                                            idPublicacion,
                                             idUsuario: id.idUsuario
                                         });
 
@@ -395,98 +395,101 @@ $(() => {
                         })
 
 
-                        socket.on("like", (data2) => {
+                        /* socket.on("like", (data2) => {
 
-                            $.ajax({
-                                url: "/obtenerIdUsuario",
-                                success: (id) => {
-
-
-                                    if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                    } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'><div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                    } else {
-                                        $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
-                                        $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
-                                    }
+                             $.ajax({
+                                 url: "/obtenerIdUsuario",
+                                 success: (id) => {
 
 
+                                     if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
 
-                                    $(`#like${data2.idPublicacion}`).off();
-                                    $(`#like${data2.idPublicacion}`).on("click", () => {
+                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                                     } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
+                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'><div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                                     } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
 
-                                        socket.emit("like", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
-
-                                    });
-                                    $(`#dislike${data2.idPublicacion}`).off();
-                                    $(`#dislike${data2.idPublicacion}`).on("click", () => {
-
-                                        socket.emit("dislike", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
-
-                                    });
-
-                                }
-                            })
+                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                                     } else {
+                                         $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
+                                         $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
+                                     }
 
 
-                        });
+
+                                     $(`#like${data2.idPublicacion}`).off();
+                                     $(`#like${data2.idPublicacion}`).on("click", () => {
+
+                                         socket.emit("like", {
+                                             idPublicacion: data2.idPublicacion,
+                                             idUsuario: id.idUsuario
+                                         });
+
+                                     });
+                                     $(`#dislike${data2.idPublicacion}`).off();
+                                     $(`#dislike${data2.idPublicacion}`).on("click", () => {
+
+                                         socket.emit("dislike", {
+                                             idPublicacion: data2.idPublicacion,
+                                             idUsuario: id.idUsuario
+                                         });
+
+                                     });
+
+                                 }
+                             })
 
 
-                        socket.on("dislike", (data2) => {
-                            $.ajax({
-                                url: "/obtenerIdUsuario",
-                                success: (id) => {
 
-                                    if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else {
-                                        $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
-                                        $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
-                                    }
+                         });
 
 
-                                    $(`#like${data2.idPublicacion}`).off();
-                                    $(`#like${data2.idPublicacion}`).on("click", () => {
+                         socket.on("dislike", (data2) => {
 
-                                        socket.emit("like", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
+                             $.ajax({
+                                 url: "/obtenerIdUsuario",
+                                 success: (id) => {
 
-                                    });
-                                    $(`#dislike${data2.idPublicacion}`).off();
-                                    $(`#dislike${data2.idPublicacion}`).on("click", () => {
+                                     if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
 
-                                        socket.emit("dislike", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
+                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                                     } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
 
-                                    });
+                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                                     } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
 
-                                }
-                            })
-                        });
+                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                                     } else {
+                                         $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
+                                         $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
+                                     }
+
+
+                                     $(`#like${data2.idPublicacion}`).off();
+                                     $(`#like${data2.idPublicacion}`).on("click", () => {
+
+                                         socket.emit("like", {
+                                             idPublicacion: data2.idPublicacion,
+                                             idUsuario: id.idUsuario
+                                         });
+
+                                     });
+                                     $(`#dislike${data2.idPublicacion}`).off();
+                                     $(`#dislike${data2.idPublicacion}`).on("click", () => {
+
+                                         socket.emit("dislike", {
+                                             idPublicacion: data2.idPublicacion,
+                                             idUsuario: id.idUsuario
+                                         });
+
+                                     });
+
+                                 }
+                             })
+
+                         });*/
 
 
 
@@ -501,14 +504,24 @@ $(() => {
                 }
 
 
+
             }
         });
+
+        socket.on("guardarRetroalimentacion", (data) => {
+            $("#misPublicaciones").click();
+        })
     });
 
+    let filtrosDeBusqueda = {
+        filtroTipoPublicacion: "",
+        filtroEstadoResolucion: "",
+        filtroVotos: "Por Me Gustas(Descendente)"
+    };
 
     $("#todasLasPublicaciones").on("click", () => {
 
-
+        k = true;
 
         $("#todasLasPublicaciones").addClass("btn btn-primary");
         $("#misPublicaciones").removeClass("btn btn-primary")
@@ -519,83 +532,94 @@ $(() => {
 
         $.ajax({
             url: "/obtenerTodasLasPublicaciones",
+            method: "POST",
+            data: {
+                filtrosDeBusqueda
+            },
             success: (data) => {
 
                 if (!data.ok) {
-                    $("#publicacionesContent").html(`<h3>Publicaciones</h3><br><br>
+                    $("#publicacionesContent").html(`<h3>Publicaciones</h3><br>
                             <div class="alert alert-danger" role="alert">${data.mensaje}</div>`)
                 } else {
 
 
+
+
                     if (data.publicaciones.length == 0) {
-                        $("#publicacionesContent").html(`<h4>Todas las Publicaciones</h4>
+                        $("#publicacionesContent").html(`<br><h4>Todas las Publicaciones</h4><br><br><br>
                             <div class="alert alert-danger" role="alert">Aun hay publicaciones, ve a la pestaña 'Hacer Publicación' y publica la primera</div>`)
                     } else {
 
 
-                        let html = `<br><h4>Todas las Publicaciones</h4><div id='mensajes'></div>`;
+                        let html = `<br><h4>Todas las Publicaciones</h4><div id='mensajes'></div>
+                        `;
+
+
 
                         for (publicacion of data.publicaciones) {
+                            if (publicacion.id_sta == 2) {
 
 
 
 
 
-                            let fecha = new Date(publicacion.fec_pub);
-                            let tipoPublicacionEscrito = "";
-                            let estadoPublicacionEscrito = "";
-                            let fechaEscrita = "";
+                                let fecha = new Date(publicacion.fec_pub);
+                                let tipoPublicacionEscrito = "";
+                                let estadoPublicacionEscrito = "";
+                                let fechaEscrita = "";
 
-                            let voto = "";
-                            if (publicacion.voto == undefined) {
-                                voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
+                                let voto = "";
+
+                                if (publicacion.voto == undefined) {
+                                    voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
                                                         </td>
                                                         <td align='center'>
                                                             <div id='imgDislike${publicacion.id_pub}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${publicacion.id_pub}'><div id='numDislikes${publicacion.id_pub}'> ${publicacion.votosNegativos}</div></div>`
-                            } else if (publicacion.voto == true) {
-                                voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
+                                } else if (publicacion.voto == true) {
+                                    voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
                                                         </td>
                                                         <td align='center'>
                                                             <div id='imgDislike${publicacion.id_pub}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${publicacion.id_pub}'><div id='numDislikes${publicacion.id_pub}'> ${publicacion.votosNegativos}</div></div>`
-                            } else if (publicacion.voto == false) {
-                                voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
+                                } else if (publicacion.voto == false) {
+                                    voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
                                                         </td>
                                                         <td align='center'>
                                                             <div id='imgDislike${publicacion.id_pub}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${publicacion.id_pub}'><div id='numDislikes${publicacion.id_pub}'> ${publicacion.votosNegativos}</div></div>`
-                            }
+                                }
 
 
-                            if (publicacion.id_sta == 1) {
-                                estadoPublicacionEscrito = `<div class="alert alert - primary" role="alert" align='center'>SIN RESOLVER</div>`;
-                            } else {
-                                estadoPublicacionEscrito = `<div class="alert alert-success" role="alert" align='center'>RESUELTA</div>`;
-                            }
+                                if (publicacion.id_sta == 1) {
+                                    estadoPublicacionEscrito = `<div class="alert alert - primary" role="alert" align='center'>SIN RESOLVER</div>`;
+                                } else {
+                                    estadoPublicacionEscrito = `<div class="alert alert-success" role="alert" align='center'>RESUELTA</div>`;
+                                }
 
-                            if (("" + fecha.getDate()).length == 1) {
-                                fechaEscrita += "0" + fecha.getDate() + "-";
-                            } else {
-                                fechaEscrita += fecha.getDate() + "-";
-                            }
+                                if (("" + fecha.getDate()).length == 1) {
+                                    fechaEscrita += "0" + fecha.getDate() + "-";
+                                } else {
+                                    fechaEscrita += fecha.getDate() + "-";
+                                }
 
-                            if (("" + (fecha.getMonth() + 1)).length == 1) {
-                                fechaEscrita += "0" + (fecha.getMonth() + 1) + "-";
-                            } else {
-                                fechaEscrita += (fecha.getMonth() + 1) + "-";
-                            }
-                            fechaEscrita += fecha.getFullYear();
+                                if (("" + (fecha.getMonth() + 1)).length == 1) {
+                                    fechaEscrita += "0" + (fecha.getMonth() + 1) + "-";
+                                } else {
+                                    fechaEscrita += (fecha.getMonth() + 1) + "-";
+                                }
+                                fechaEscrita += fecha.getFullYear();
 
-                            if (publicacion.id_tip == 1) {
-                                html += `<div class="alert alert-primary" role="alert" align='center'>`;
-                                tipoPublicacionEscrito = "Sugerencia";
-                            } else if (publicacion.id_tip == 2) {
-                                html += `<div class="alert alert-warning" role="alert" align="center">`;
-                                tipoPublicacionEscrito = "BUG";
-                            } else if (publicacion.id_tip) {
-                                html += `<div class="alert alert-danger" role="alert" align='center'>`;
-                                tipoPublicacionEscrito = "ERROR"
-                            }
+                                if (publicacion.id_tip == 1) {
+                                    html += `<div class="alert alert-primary" role="alert" align='center'>`;
+                                    tipoPublicacionEscrito = "Sugerencia";
+                                } else if (publicacion.id_tip == 2) {
+                                    html += `<div class="alert alert-warning" role="alert" align="center">`;
+                                    tipoPublicacionEscrito = "BUG";
+                                } else if (publicacion.id_tip) {
+                                    html += `<div class="alert alert-danger" role="alert" align='center'>`;
+                                    tipoPublicacionEscrito = "ERROR"
+                                }
 
-                            html += ` <table width="100%" cellpadding="10" border='1'> 
+                                html += ` <table width="100%" cellpadding="10" border='1'> 
                                             <tr>
                                                 <td align='left' width='25%'>
                                                     <small>Username: ${publicacion.username}</small>
@@ -636,14 +660,14 @@ $(() => {
 
 
 
-                            if (publicacion.ret_pub != null) {
-                                html += `<tr>
+                                if (publicacion.ret_pub != null) {
+                                    html += `<tr>
                                                     <td colspan="3">
                                                         Comentarios del Desarrollador: ${publicacion.ret_pub}
                                                     </td>
                                                 </tr>`
-                            }
-                            html += `
+                                }
+                                html += `
                                         </table>
                                         <br>
                                              
@@ -651,14 +675,131 @@ $(() => {
                                             
                                            
                                                                         </div><hr>`
-
-
-
-
-
-
+                            }
 
                         }
+                        for (publicacion of data.publicaciones) {
+                            if (publicacion.id_sta == 1) {
+
+
+
+
+
+                                let fecha = new Date(publicacion.fec_pub);
+                                let tipoPublicacionEscrito = "";
+                                let estadoPublicacionEscrito = "";
+                                let fechaEscrita = "";
+
+                                let voto = "";
+
+                                if (publicacion.voto == undefined) {
+                                    voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
+                                                        </td>
+                                                        <td align='center'>
+                                                            <div id='imgDislike${publicacion.id_pub}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${publicacion.id_pub}'><div id='numDislikes${publicacion.id_pub}'> ${publicacion.votosNegativos}</div></div>`
+                                } else if (publicacion.voto == true) {
+                                    voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
+                                                        </td>
+                                                        <td align='center'>
+                                                            <div id='imgDislike${publicacion.id_pub}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${publicacion.id_pub}'><div id='numDislikes${publicacion.id_pub}'> ${publicacion.votosNegativos}</div></div>`
+                                } else if (publicacion.voto == false) {
+                                    voto = `<div id='imgLike${publicacion.id_pub}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${publicacion.id_pub}'> <div id='numLikes${publicacion.id_pub}'> ${publicacion.votosPositivos}</div></div>
+                                                        </td>
+                                                        <td align='center'>
+                                                            <div id='imgDislike${publicacion.id_pub}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${publicacion.id_pub}'><div id='numDislikes${publicacion.id_pub}'> ${publicacion.votosNegativos}</div></div>`
+                                }
+
+
+                                if (publicacion.id_sta == 1) {
+                                    estadoPublicacionEscrito = `<div class="alert alert - primary" role="alert" align='center'>SIN RESOLVER</div>`;
+                                } else {
+                                    estadoPublicacionEscrito = `<div class="alert alert-success" role="alert" align='center'>RESUELTA</div>`;
+                                }
+
+                                if (("" + fecha.getDate()).length == 1) {
+                                    fechaEscrita += "0" + fecha.getDate() + "-";
+                                } else {
+                                    fechaEscrita += fecha.getDate() + "-";
+                                }
+
+                                if (("" + (fecha.getMonth() + 1)).length == 1) {
+                                    fechaEscrita += "0" + (fecha.getMonth() + 1) + "-";
+                                } else {
+                                    fechaEscrita += (fecha.getMonth() + 1) + "-";
+                                }
+                                fechaEscrita += fecha.getFullYear();
+
+                                if (publicacion.id_tip == 1) {
+                                    html += `<div class="alert alert-primary" role="alert" align='center'>`;
+                                    tipoPublicacionEscrito = "Sugerencia";
+                                } else if (publicacion.id_tip == 2) {
+                                    html += `<div class="alert alert-warning" role="alert" align="center">`;
+                                    tipoPublicacionEscrito = "BUG";
+                                } else if (publicacion.id_tip) {
+                                    html += `<div class="alert alert-danger" role="alert" align='center'>`;
+                                    tipoPublicacionEscrito = "ERROR"
+                                }
+
+                                html += ` <table width="100%" cellpadding="10" border='1'> 
+                                            <tr>
+                                                <td align='left' width='25%'>
+                                                    <small>Username: ${publicacion.username}</small>
+                                                </td>
+                                                <td align='center' width='50%'>
+                                                    <h3><b>${publicacion.tit_pub}</b></h3>
+                                                </td>
+                                                <td align="center" width='25%'>
+                                                    Tipo de publicacion: ${tipoPublicacionEscrito}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='3'>
+                                                     <h4>Descripción:</h4>
+                                                   <h5>${publicacion.des_pub}</h5>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align='center'>
+                                                    <b>${estadoPublicacionEscrito}</b>
+                                                </td>
+                                                <td align='center'>
+                                                    <small>Publicado el ${fechaEscrita}</small>
+                                                </td>
+                                                <td align='center'>
+                                                <table >
+                                                    <tr>
+                                                        <td align='center'>
+                                                            ${voto}
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                
+                                                    
+                                                </td>
+                                                    </tr>`
+
+
+
+                                if (publicacion.ret_pub != null) {
+                                    html += `<tr>
+                                                    <td colspan="3">
+                                                        Comentarios del Desarrollador: ${publicacion.ret_pub}
+                                                    </td>
+                                                </tr>`
+                                }
+                                html += `
+                                        </table>
+                                        <br>
+                                             
+
+                                            
+                                           
+                                                                        </div><hr>`
+                            }
+
+                        }
+
 
                         $("#publicacionesContent").html(html);
 
@@ -666,11 +807,13 @@ $(() => {
                             url: "/obtenerIdUsuario",
                             success: (id) => {
                                 for (publicacion of data.publicaciones) {
+                                    let idPublicacion = publicacion.id_pub;
                                     $(`#like${publicacion.id_pub}`).off();
+
                                     $(`#like${publicacion.id_pub}`).on("click", () => {
 
                                         socket.emit("like", {
-                                            idPublicacion: publicacion.id_pub,
+                                            idPublicacion,
                                             idUsuario: id.idUsuario
                                         });
 
@@ -679,7 +822,7 @@ $(() => {
                                     $(`#dislike${publicacion.id_pub}`).on("click", () => {
 
                                         socket.emit("dislike", {
-                                            idPublicacion: publicacion.id_pub,
+                                            idPublicacion,
                                             idUsuario: id.idUsuario
                                         });
 
@@ -689,101 +832,14 @@ $(() => {
                         })
 
 
-                        socket.on("like", (data2) => {
-
-                            $.ajax({
-                                url: "/obtenerIdUsuario",
-                                success: (id) => {
-
-                                    if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                    } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'><div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                    } else {
-                                        $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
-                                        $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
-                                    }
 
 
-
-                                    $(`#like${data2.idPublicacion}`).off();
-                                    $(`#like${data2.idPublicacion}`).on("click", () => {
-
-                                        socket.emit("like", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
-
-                                    });
-                                    $(`#dislike${data2.idPublicacion}`).off();
-                                    $(`#dislike${data2.idPublicacion}`).on("click", () => {
-
-                                        socket.emit("dislike", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
-
-                                    });
-
-                                }
-                            })
-
-
-                        });
-
-
-                        socket.on("dislike", (data2) => {
-                            $.ajax({
-                                url: "/obtenerIdUsuario",
-                                success: (id) => {
-                                    if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
-
-                                        $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                    } else {
-                                        $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
-                                        $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
-                                    }
-
-
-                                    $(`#like${data2.idPublicacion}`).off();
-                                    $(`#like${data2.idPublicacion}`).on("click", () => {
-
-                                        socket.emit("like", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
-
-                                    });
-                                    $(`#dislike${data2.idPublicacion}`).off();
-                                    $(`#dislike${data2.idPublicacion}`).on("click", () => {
-
-                                        socket.emit("dislike", {
-                                            idPublicacion: data2.idPublicacion,
-                                            idUsuario: id.idUsuario
-                                        });
-
-                                    });
-
-                                }
-                            })
-                        });
 
 
 
 
                     }
+
 
                 }
 
@@ -795,6 +851,133 @@ $(() => {
 
 
         });
+
+
+        socket.on("nuevaPublicacion", (nuevaPublicacion) => {
+            $('.toast').toast('show');
+            if (k) {
+                $("#todasLasPublicaciones").click();
+            }
+
+
+        });
+
+
+    });
+
+    socket.on("guardarRetroalimentacion", (data) => {
+
+        $.ajax({
+            url: "/obtenerIdUsuario",
+            success: (id) => {
+
+                if (id.idUsuario == data.id) {
+                    alert(`Ha sido contestada tu publicación: ${data.titulo}`);
+
+                }
+                if (k) {
+                    $("#todasLasPublicaciones").click();
+                }
+            }
+        })
+
+
+
+
+    })
+
+
+    socket.on("like", (data2) => {
+
+        $.ajax({
+            url: "/obtenerIdUsuario",
+            success: (id) => {
+
+                if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
+
+                    $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
+                    $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'><div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                    $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
+
+                    $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                } else {
+                    $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
+                    $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
+                }
+
+
+
+                $(`#like${data2.idPublicacion}`).off();
+                $(`#like${data2.idPublicacion}`).on("click", () => {
+
+                    socket.emit("like", {
+                        idPublicacion: data2.idPublicacion,
+                        idUsuario: id.idUsuario
+                    });
+
+                });
+                $(`#dislike${data2.idPublicacion}`).off();
+                $(`#dislike${data2.idPublicacion}`).on("click", () => {
+
+                    socket.emit("dislike", {
+                        idPublicacion: data2.idPublicacion,
+                        idUsuario: id.idUsuario
+                    });
+
+                });
+
+            }
+        })
+
+
+
+    });
+
+
+    socket.on("dislike", (data2) => {
+
+        $.ajax({
+            url: "/obtenerIdUsuario",
+            success: (id) => {
+                if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
+
+                    $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
+                    $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
+
+                    $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
+
+                    $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
+                } else {
+                    $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
+                    $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
+                }
+
+
+                $(`#like${data2.idPublicacion}`).off();
+                $(`#like${data2.idPublicacion}`).on("click", () => {
+
+                    socket.emit("like", {
+                        idPublicacion: data2.idPublicacion,
+                        idUsuario: id.idUsuario
+                    });
+
+                });
+                $(`#dislike${data2.idPublicacion}`).off();
+                $(`#dislike${data2.idPublicacion}`).on("click", () => {
+
+                    socket.emit("dislike", {
+                        idPublicacion: data2.idPublicacion,
+                        idUsuario: id.idUsuario
+                    });
+
+                });
+
+            }
+        })
 
     });
 
