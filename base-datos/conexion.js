@@ -1655,7 +1655,7 @@ const guardarRetroalimentacion = (idPublicacion, retroalimentacionPublicacion) =
             if (err) {
                 reject(err)
             } else {
-                connection.query(`update publicacion set ret_pub='${retroalimentacionPublicacion} <br><br><b> En caso de que el problema continue, puede volver a hacer una publicación o mandar un correo a (Correo de Korb)</b>', id_sta=2 where id_pub=${idPublicacion}`, (err) => {
+                connection.query(`update publicacion set ret_pub='${retroalimentacionPublicacion} <br><br><b> En caso de que el problema continue, puede volver a hacer una publicación o mandar un correo a geleceksoftwaredevelopment@gmail.com</b>', id_sta=2 where id_pub=${idPublicacion}`, (err) => {
                     if (err) {
                         reject(err);
                     } else {

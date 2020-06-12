@@ -175,7 +175,7 @@ $(() => {
 
                                 if (publicacion.id_tip == 2 || publicacion.id_tip == 3) {
                                     html += `
-										En caso de que el problema continue, puede volver a hacer una publicación o mandar un correo a (Correo de Korb)"	
+										En caso de que el problema continue, puede volver a hacer una publicación o mandar un correo a geleceksoftwaredevelopment@gmail.com"	
 									</td>
                             		</tr>`
                                 } else {
