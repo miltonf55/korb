@@ -44,7 +44,7 @@ app.get("/proyecciones", (req, res) => {
     }
 
 });
-app.post("/proyecciones", autenticacionInversa,(req, res) => {
+/*app.post("/proyecciones", autenticacionInversa,(req, res) => {
     let idPro=req.body.canastaSelect;
     let date=req.body.date;
     db.numeroRegistradoProductos(idPro).then(data => {
@@ -78,7 +78,7 @@ app.post("/proyecciones", autenticacionInversa,(req, res) => {
 
     }
 
-});
+});*/
 
 app.post("/proyectoX", autenticacion, (req, res) => {
     let body = req.body;

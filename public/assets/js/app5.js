@@ -91,18 +91,10 @@ $(() => {
                 success: (msg) => {
 
                     if (msg.ok == false) {
-                        $("#mensaje").html(`<div class="alert alert-danger" role="alert">${msg.mensaje}</div>`)
+                        $("#chart").html(`<div class="alert alert-danger" role="alert">${msg.mensaje}</div>`)
 
                     } else if (msg.ok == true) {
-                        $("#mensaje").html(`<div class="alert alert-success" role="alert">${msg.mensaje}</div>`)
-                        $.ajax({
-                            url: "/obtenerSalario",
-                            success: (msg) => {
-                                $("#sueldoMensual").val(msg.sue_dat);
-                                $("#horasAlDia").val(msg.hor_dat);
-                                $("#diasALaSemana").val(msg.dia_dat);
-                            }
-                        });
+                        $("#chart").html(`<div class="alert alert-success" role="alert">${msg.mensaje}</div>`)
                     }
                 }
             });
