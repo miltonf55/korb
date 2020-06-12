@@ -9,22 +9,20 @@ $(() => {
             url: "/proyectoX",
             method: "POST",
             data,
-            success: (data) => {
-                if (!data.ok) {
-                    $("#horasNecesariasParaCBA").html(`<div class="alert alert-danger" role="alert">Necesitas llenar el formulario de la pestaña "Salario" para visualizar esta información</div>`)
+            success: (datae) => {
+                if (!datae.ok) {
+                    $("#chart").html(`<div class="alert alert-danger" role="alert">Algo salio mal. Por favor intente mas tarde.</div>`)
                 } else {
-                    $("#chart").html(`<div class="alert alert-success" role="alert"> Horas</div>`);
+                    let html=grafica(datae.proyeccion, data.date);
+                    $("#chart").html(html);
                 }
             }
         });
     }
-    $("#salarioForm").on("click", () => {
+    $(document).ready(() => {
         proyeccionCB();
-        $("#salarioForm").addClass("btn btn-primary");
-        $("#gastosForm").removeClass("btn btn-primary")
-        $("#gastosForm").addClass("nav-link");
 
-        $("#formsContent").html(`<div class="input-group">
+        $("#proyecta").html(`<div class="input-group">
                 <select class="custom-select" id="canastaSelect" name="canastaSelect" aria-label="Example select with button addon">
                     <option selected value="38">Canasta básica</option>
                     <option value="1">Tortilla de maiz</option>
@@ -71,30 +69,26 @@ $(() => {
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" id="proye" type="button">Aceptar</button>
                 </div>
-            </div>
-            <br><br>
-            <canvas id="myChart" class="table"></canvas>`);
+            </div>`);
 
         $("#proye").on("click", () => {
-
-
-            let data = {
+            $("#chart").html(`<div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            </div>`);
+            var data = {
                 id: $("#canastaSelect").val().split(" ").join(""),
                 date: $("#date").val().split(" ").join("")
             }
-
-
             $.ajax({
-                url: "/guardarDatosSalario",
+                url: "/proyectoX",
                 method: "POST",
                 data,
-                success: (msg) => {
-
-                    if (msg.ok == false) {
-                        $("#chart").html(`<div class="alert alert-danger" role="alert">${msg.mensaje}</div>`)
-
-                    } else if (msg.ok == true) {
-                        $("#chart").html(`<div class="alert alert-success" role="alert">${msg.mensaje}</div>`)
+                success: (datae) => {
+                    if (!datae.ok) {
+                        $("#chart").html(`<div class="alert alert-danger" role="alert">Algo salio mal. Por favor intente mas tarde.</div>`)
+                    } else {
+                        let html=grafica(datae.proyeccion, data.date);
+                        $("#chart").html(html);
                     }
                 }
             });
@@ -113,8 +107,92 @@ $(() => {
         if(mes<10)
             mes='0'+mes;
         let f=ano+"-"+mes+"-"+dia;
-        console.log(f);
         return f;
     }
-    $("#salarioForm").click();
+    function grafica(proyeccion, date){
+        let m=proyeccion[0];
+        let b=proyeccion[1];
+        let x=0;
+        let d=date.split("-");
+        x=(parseInt(d[0])-2000)*12;
+        x+=parseInt(d[1]);
+        x-=12;
+        let html=`<canvas id="myChart" class="table"></canvas>
+        <script>    
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                
+                type: 'bar',
+                data:{
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    data: [`;
+        for (let i = 0; i < 11; i++) {
+            let y=(m*x)+b;
+            html+=y+`,`
+            x++;
+        }
+        x++;
+        let y=(m*x)+b;
+        html+=y+`],
+        backgroundColor: ['#062b61','#246a73','#062b61','#246a73','#062b61','#246a73','#062b61','#246a73','#062b61','#246a73','#062b61','#246a73',],
+        label: 'Proyeccion'}],
+        labels: [`;
+        if (x%12==0) {
+            x-=12;
+            for (let j = 0; j < 11; j++) {
+                let dat="";
+                let w=Math.floor(x/12);
+                dat+=(w+2000)+"-";
+                let mes=(x-(w*12))+1;
+                if(mes<10)
+                    mes='0'+mes;
+                dat+=mes+"-01";
+                html+="'"+dat+"',"
+                x++;
+            }
+            x++;
+            let dat="";
+            let w=Math.floor(x/12);
+            dat+=(w+1999)+"-";
+            dat+="12-01";
+            html+="'"+dat+`']},
+            options: {responsive: true}
+            });
+            </script>`;   
+        }else{
+            x-=12;
+            for (let j = 0; j < 11; j++) {
+                let dat="";
+                let w=Math.floor(x/12);
+                dat+=(w+2000)+"-";
+                let mes=x-(w*12);
+                mes+=1;
+                if(mes<10){
+                    mes='0'+mes;
+                    dat+=mes+"-01";
+                }else{
+                    dat+=mes+"-01";
+                }
+                    
+                html+="'"+dat+"',"
+                x++;
+            }
+            x++;
+            let dat="";
+            let w=Math.floor(x/12);
+            dat+=(w+2000)+"-";
+            let mes=x-(w*12);
+            if(mes<10)
+                mes='0'+mes;
+            if(mes==0)
+                mes='12';
+            dat+=mes+"-01";
+            html+="'"+dat+`']},
+            options: {responsive: true}
+            });
+            </script>`;
+        }
+        return html;
+    }
 });
