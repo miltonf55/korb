@@ -1,13 +1,27 @@
 {
-  "name": "korb-alfa",
+  "name": "korb",
   "version": "1.0.0",
-  "description": "",
+  "description": "Poryecciones de la canasta basica",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
     "test": "nodemon server.js"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miltonf55/korb.git"
+  },
+  "keywords": [
+    "Proyecciones",
+    "canasta",
+    "basica"
+  ],
+  "author": "Gelecek",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miltonf55/korb/issues"
+  },
+  "homepage": "https://github.com/miltonf55/korb#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
