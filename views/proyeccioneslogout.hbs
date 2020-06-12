@@ -1,8 +1,30 @@
 {{>head}}
 
 {{>navbarinicio}}
+<div class="control">
+  <div id="proyecta"></div>
+  <br><br>
+  <div id="chart">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+    </div>
+  </div>
+</div>
 
-Aqui habrá proyecciones(Sesión no iniciada)
 
-
+</div>
+<script>
+    function date(){
+        var fecha = new Date(); 
+        var mes = fecha.getMonth()+1;
+        var dia = fecha.getDate();
+        var ano = fecha.getFullYear();
+        if(dia<10)
+            dia='0'+dia; 
+        if(mes<10)
+            mes='0'+mes;
+        document.getElementById('date').value=ano+"-"+mes+"-"+dia;
+    }
+    setTimeout(date,1500);
+</script>
 {{>footerinicio }}

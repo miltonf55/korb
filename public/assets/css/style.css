@@ -85,3 +85,13 @@ footer {
     text-align: center;
     padding: 5px;
 }
+
+.control{
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 5%;
+}
+.table{
+    width: 5rem;
+    height: 5rem;
+}

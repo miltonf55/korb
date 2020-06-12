@@ -3,6 +3,7 @@ const express = require("express");
 const session = require("express-session");
 const db = require("../base-datos/conexion.js");
 const validaciones = require("../middlewares/validaciones.js");
+const pr = require("../middlewares/proyeccion.js");
 
 const {
     autenticacion,
@@ -15,6 +16,7 @@ const {
     cifrar,
     decifrar
 } = require("../middlewares/cifrado.js");
+
 
 const app = express();
 

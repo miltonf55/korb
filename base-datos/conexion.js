@@ -47,6 +47,7 @@ const validarCorreo = (correo) => {
                         resolve(disponible);
                     }
                 });
+                
             }
             connection.release();
         });
@@ -1065,7 +1066,56 @@ const eliminarPublicacion = (idPublicacion, idUsuario) => {
         });
     });
 }
+const obtenerCostosCB = (id) => {
 
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select can_pre from precio where id_pro=${id}`, (err, res) => {
+
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                });
+            }
+
+
+            connection.release();
+        });
+    });
+
+}
+const numeroRegistradoProductos = (id) => {
+
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+            if (err) {
+                reject(err)
+            } else {
+                connection.query(`select count(can_pre) AS regCount from precio where id_pro=${id}`, (err, res) => {
+
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                });
+            }
+
+
+            connection.release();
+        });
+    });
+
+}
 
 
 
@@ -1096,6 +1146,8 @@ module.exports = {
     obtenerTiposDePublicacion,
     guardarPublicacion,
     obtenerPublicacionesDeUsuario,
-    eliminarPublicacion
+    eliminarPublicacion,
+    numeroRegistradoProductos,
+    obtenerCostosCB
 
 };
