@@ -1,0 +1,171 @@
+{{>head}}
+{{>navbar}}
+
+<br>
+
+
+
+
+<div align="center">
+	<h1>Gestión de Usuarios</h1>
+	<br>
+	<table>
+	<tr>
+		<td>
+			<b>Filtros:&nbsp;&nbsp;</b>
+		</td>
+		<td>
+				<form method="get" action="/filtro"> 
+<select name="filtros">
+	{{#if Filtro}}<option>{{Filtro}}</option>{{/if}}
+	<option>Sin filtro</option>
+	<option>Por apellido(ascendente)</option>
+	<option>Por apellido(descendente)</option>
+	<option>Por nombre de usuario(ascendente)</option>
+	<option>Por nombre de usuario(descendente)</option>
+	<option>Solo usuarios</option>
+	<option>Solo admins</option>
+</select>
+
+<button  class="btn btn-primary" type="submit">Filtrar</button>
+</form>
+
+
+		</td>
+	</tr>
+</table>
+<div class="gestionUsuarios" align="center">
+
+{{#if ErrorEliminacionUsuario}}
+<div class="alert alert-danger" role="alert">
+  {{ErrorEliminacionUsuario}}
+</div>
+{{/if}}
+
+
+{{#if ExitoEliminacionUsuario}}
+<div class="alert alert-success" role="alert">
+  {{ExitoEliminacionUsuario}}
+</div>
+{{/if}}
+
+
+{{#if MensajeError}}
+<div class="alert alert-danger" role="alert">
+  {{MensajeError}}
+</div>
+
+
+{{else}}
+
+{{#if Usuarios}}
+
+
+
+
+
+<br>
+
+<table cellpadding="10" border="1" class="table" align="center">
+	<thead class="thead-dark">
+		<th scope="col">Nombre Completo</th>
+			
+		
+		
+			<th scope="col">Nombre de Usuario</th>
+		
+		
+			<th scope="col">Correo</th>
+		
+		
+			<th scope="col">Privilegios</th>
+		
+		
+			<th scope="col" colspan="2" >Acciones</th>
+		
+
+	</thead >
+
+	{{#each Usuarios}}
+	
+	<tr>
+		<td> {{this.nombreCompleto}} </td>
+		<td> {{this.username}} </td>
+		<td> {{this.correo}}</td>
+		<td> {{this.privilegios}} </td>
+		 {{#if this.intocable}}<td colspan="2"> 
+			No puedes modificar/eliminar un Administrador</td>
+				{{else}}
+					<td>
+<form method="post" action="/modificarUsuario?id={{this.id}}">
+
+<button  class="btn btn-primary" type="submit">
+  Modificar
+</button>
+
+</form>
+</td><td>
+
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{this.id}}">
+  Eliminar
+</button>
+</td>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal{{this.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Advertencia</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ¿Seguro que quieres eliminar este usuario?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+       <form method="post" action="/eliminarUsuario?id={{this.id}}"><button type="submit" class="btn btn-primary">Eliminar</button></form> 
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+			{{/if}}
+		
+		</td>
+	</tr>
+
+	{{/each}}
+</table>
+
+
+{{else}}
+	<br><br>
+	<div class="alert alert-primary" role="alert">
+	Sin usuarios
+	</div>
+{{/if}}
+{{/if}}
+
+</div>
+</div>
+{{>footer}}

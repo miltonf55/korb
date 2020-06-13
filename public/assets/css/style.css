@@ -1,0 +1,121 @@
+#navbar{
+	background-color: #062B61 ;
+}
+
+#nombreapp{
+	
+	font-size: 3em;
+
+}
+
+#salario{
+    padding: 1em;
+    margin: 3em;
+}
+
+#opciones-menu,#navbarDropdownMenuLink{
+	
+	font-size: 1em;
+
+}
+
+.gestionUsuarios{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 80%;
+    font-size: 1em;
+}
+
+.login{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 30em;
+
+
+}
+
+.signin{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 50em;
+}
+
+.mitadPantalla{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 95%;
+}
+
+.mitadPantalla2{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 100%;
+}
+
+.datoscuenta{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 60%;
+    font-size: 1em;
+
+}
+
+.datospassword{
+    border: 1px solid #E1E1E1;
+    border-radius: 1em;
+    padding: 1em;
+    width: 40%;
+    font-size: 1em;
+
+}
+
+
+footer {
+    background-color:  #0B3778;
+    color: aliceblue;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    text-align: center;
+    padding: 5px;
+}
+
+.control{
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 5%;
+}
+.table{
+    width: 5rem;
+    height: 5rem;
+}
+
+.round_table {
+                    border-collapse:separate;
+                    border-spacing: 10;
+                    border:solid black 1px;
+                    border-radius:10px;
+                    -moz-border-radius:10px;
+                    -webkit-border-radius: 5px;    
+                }
+
+.textoLandPage{
+    font-family: Georgia;
+    text-align: justify;
+}
+
+
+.tr_inicio{
+    border-left: 1px hidden;
+  border-right: 1px hidden;
+}
+
+.td_inicio{
+    border: 1px solid #dddddd;
+}

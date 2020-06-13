@@ -1,0 +1,56 @@
+{{>head}}
+{{>navbar}}
+
+
+<br><br>
+<div align="center">
+	<h1>Gestion de Precios</h1>
+	<br>
+
+<div id="alertas"></div>
+
+
+<div class="login">
+		<table cellpadding="10" border="1" class="table" align="center">
+	<thead class="thead-dark">
+			
+			<th scope="col" align="center">Nombre de Producto</th>
+			<th scope="col" align="center">Precio</th>
+		
+	</thead >
+	<tbody>
+		{{#each Productos}}
+		<tr>
+			<td align="right">
+				{{this.nombreProducto}}
+			</td>
+			<td>
+				<input type="text" id="{{remplazarEspacios this.nombreProducto}}" value="{{this.precioProducto}}">
+			</td>
+		</tr>
+		{{/each}}
+		<tr>
+			<td align="center">
+				Fecha de precios:<input type="date" id="fechaPrecios">
+			</td>
+			<td  align="center">
+				<button id="guardarPrecios" class="btn btn-primary">Guardar Precios</button>
+				
+			</td>
+		</tr>
+
+	</tbody>
+</table>
+<br><br><hr>
+</div>
+	
+
+</div>
+	
+
+
+
+
+
+
+{{>footer}}

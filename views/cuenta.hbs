@@ -1,0 +1,170 @@
+{{>head}}
+{{>navbar}}
+
+
+<br>
+
+
+<br>
+<div align="center">
+	
+	
+	{{#if EditarDatosUsuario}}
+	<h1>Modificar Datos Personales de Usuario</h1>
+	<br>
+<div class="datoscuenta" align="center">
+<form method="post" action="/editarDatos">
+	{{#if AlertaModificarDatos}}
+	<div class="alert alert-danger" role="alert">
+  	{{AlertaModificarDatos}}
+	</div>
+	{{/if}}
+	
+	<table cellpadding="10">
+		<tr>
+			
+			<td>
+    			<input name="nombre" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre(s)" {{#if Datos.nombre}}value='{{Datos.nombre}}'{{/if}}>
+			</td>
+			
+			<td>
+    			<input name="appaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Paterno"
+    			{{#if Datos.appaterno}}value='{{Datos.appaterno}}'{{/if}}>
+			</td>
+			
+			<td>
+    			<input name="apmaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Materno"
+    			{{#if Datos.apmaterno}}value='{{Datos.apmaterno}}'{{/if}}>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="correo" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Correo Electrónico" {{#if Datos.correo}}value='{{Datos.correo}}'{{/if}}>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre de Usuario" {{#if Datos.username}}value='{{Datos.username}}'{{/if}}>
+				
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<button type="submit" class="btn btn-primary btn-block ">Guardar Cambios</button>
+			</td>
+		</tr>
+		
+	</table>
+</form>
+</div>
+
+{{else}}
+
+{{#if EditarPasswordUsuario}}
+<h1>Modificar Contraseña</h1>
+<br>
+
+<div class="datospassword" align="center">
+	
+
+	
+	<form  method="post" action="/editarPassword">
+		{{#if AlertaModificarPassword}}
+	<div class="alert alert-danger" role="alert">
+  	{{AlertaModificarPassword}}
+  	</div>
+	{{/if}}
+			
+			<div class="form-group" align="left">
+    <label for="exampleInputPassword1">Contraseña Anterior</label>
+    <input name="password0" type="password" class="form-control" id="exampleInputPassword1" placeholder="**********"> 
+    
+    </div>
+    <div class="form-group" align="left">
+    <label for="exampleInputPassword1">Nueva Contraseña</label>
+    <input name="password1" type="password" class="form-control" id="exampleInputPassword1" placeholder="**********"> 
+    
+
+  </div>
+  <div class="form-group" align="left">
+    <label for="exampleInputPassword1">Confirmar Nueva Contraseña</label>
+    <input name="password2" type="password" class="form-control" id="exampleInputPassword1" placeholder="**********"> 
+    
+
+  </div>
+
+		
+	<button type="submit" class="btn btn-primary btn-block ">Guardar Cambios</button>
+
+	</form>
+
+</div>
+
+</div>
+{{else}}
+<h1>Datos Personales de Usuario</h1>
+	<br>
+<br>
+	<div class="datoscuenta" align="center">
+	{{#if AlertaModificarDatos}}
+	<div class="alert alert-success" role="alert">
+  {{AlertaModificarDatos}}
+</div>
+	{{/if}}
+		<table cellpadding="10" >
+			<tr>
+				<td align="right">
+					<b>Nombre Completo:</b>
+				</td>
+				<td></td>
+				<td align="center">
+					{{Datos.nombreCompleto}}
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td align="right">
+					<b>Nombre de Usuario:</b>
+				</td>
+				<td></td>
+				<td align="center">
+					{{Datos.username}}
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td align="right">
+					<b>Correo:</b>
+				</td>
+				<td>
+					
+				</td>
+				<td align="center">
+					{{Datos.correo}}
+				</td>
+				<td></td>
+			</tr>
+			
+		</table>
+		<br>
+
+		<form method="get" action="/editarDatos">
+			<button type="submit" class="btn btn-primary btn-block ">Modificar Datos</button>
+		</form>
+					<br>
+		<form method="get" action="/editarPassword">
+			<button type="submit" class="btn btn-primary btn-block ">Cambiar Contraseña</button>
+		</form>
+					
+			
+		
+		
+		
+	</div>
+
+{{/if}}
+{{/if}}
+
+
+</div>
+{{>footer}}
