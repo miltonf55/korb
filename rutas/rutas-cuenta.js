@@ -97,7 +97,7 @@ app.post("/editarPassword", autenticacion, (req, res) => {
 
 
                 }).catch(msg => {
-                    req.session.alertaModificarPassword = "Ha ocurrido un error inesperado, vuelve a intentarlo porfavor";
+                    req.session.alertaModificarPassword = "Algo salio mal. Por favor intente más tarde.";
                     req.session.EditarPasswordUsuario = true;
                     res.redirect("/cuenta");
                 });
@@ -161,19 +161,19 @@ app.post("/editarDatos", autenticacion, (req, res) => {
 
                             }).catch(msg => {
                                 console.log(msg);
-                                req.session.alertaModificarDatos = "Ha ocurrido un error inesperado, intentalo de nuevo";
+                                req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.";
                                 req.session.EditarDatosUsuario = true;
                                 res.redirect("/cuenta");
                             });
                         }
                     }).catch(msg => {
-                        req.session.alertaModificarDatos = "Ha ocurrido un error inesperado, vuelve a intentarlo";
+                        req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.";
                         req.session.EditarDatosUsuario = true;
                         res.redirect("/cuenta");
                     });
                 }
             }).catch(msg => {
-                req.session.alertaModificarDatos = "Ha ocurrido un error inesperado, vuelve a intentarlo";
+                req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.";
                 req.session.EditarDatosUsuario = true;
                 res.redirect("/cuenta");
             })

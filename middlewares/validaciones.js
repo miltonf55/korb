@@ -99,7 +99,30 @@ function validarEntero(numero) {
         return false;
     }
 }
-
+function validarDate(checkStr){
+    var checkOk="1234567890-";
+    var todovalido=true;
+    for(i=0;i<checkStr.length;i++)
+    {
+        ch=checkStr.charAt(i);
+        for(j=0;j<checkOk.length;j++)
+        {
+            if(ch==checkOk.charAt(j))
+            {
+                break;
+            }
+        }
+        if(j==checkOk.length)
+        {
+            todovalido=false;
+            break;
+        }
+	}
+	if(!checkStr.length==10){
+		todovalido=false;
+	}
+	return todovalido;
+}
 
 
 
@@ -110,5 +133,6 @@ module.exports = {
     escritura,
     validarDecimal,
     validarEntero,
-    validarDecimal2
+    validarDecimal2,
+    validarDate
 };
