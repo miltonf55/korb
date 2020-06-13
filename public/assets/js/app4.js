@@ -16,6 +16,9 @@ $(() => {
 
     //JQuery
     $("#hacerPublicacion").on("click", () => {
+        $("#publicacionesContent").html(`<br><br><div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            </div>`);
         k = false;
         $("#hacerPublicacion").addClass("btn btn-primary");
         $("#misPublicaciones").removeClass("btn btn-primary")
@@ -73,7 +76,7 @@ $(() => {
                                       <div class="input-group-prepend">
                                         <span class="input-group-text">Descripción</span>
                                       </div>
-                                      <textarea class="form-control" aria-label="With textarea" id='descripcionPublicacion' maxlength="1000"></textarea>
+                                      <textarea class="form-control" aria-label="With textarea" id='descripcionPublicacion' maxlength="400"></textarea>
                                       <br><div id='caracteresDescripcion'></div>
                                     </div>
 
@@ -163,7 +166,9 @@ $(() => {
         $("#todasLasPublicaciones").addClass("nav-link");
         $("#hacerPublicacion").removeClass("btn btn-primary")
         $("#hacerPublicacion").addClass("nav-link");
-
+        $("#publicacionesContent").html(`<br><br><div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            </div>`);
 
         $.ajax({
             url: "/obtenerMisPublicaciones",
@@ -394,111 +399,6 @@ $(() => {
                             }
                         })
 
-
-                        /* socket.on("like", (data2) => {
-
-                             $.ajax({
-                                 url: "/obtenerIdUsuario",
-                                 success: (id) => {
-
-
-                                     if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
-
-                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                     } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
-                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'><div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                     } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
-
-                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/likeMarcado.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                     } else {
-                                         $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
-                                         $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
-                                     }
-
-
-
-                                     $(`#like${data2.idPublicacion}`).off();
-                                     $(`#like${data2.idPublicacion}`).on("click", () => {
-
-                                         socket.emit("like", {
-                                             idPublicacion: data2.idPublicacion,
-                                             idUsuario: id.idUsuario
-                                         });
-
-                                     });
-                                     $(`#dislike${data2.idPublicacion}`).off();
-                                     $(`#dislike${data2.idPublicacion}`).on("click", () => {
-
-                                         socket.emit("dislike", {
-                                             idPublicacion: data2.idPublicacion,
-                                             idUsuario: id.idUsuario
-                                         });
-
-                                     });
-
-                                 }
-                             })
-
-
-
-                         });
-
-
-                         socket.on("dislike", (data2) => {
-
-                             $.ajax({
-                                 url: "/obtenerIdUsuario",
-                                 success: (id) => {
-
-                                     if (data2.estado == 1 && data2.idUsuario == id.idUsuario) {
-
-                                         $(`#imgLike${data2.idPublicacion}`).html(`<div id='imgLike${data2.idPublicacion}'><img src='assets/img/like.png' style='cursor:pointer' width='80%' id='like${data2.idPublicacion}'> <div id='numLikes${data2.idPublicacion}'> ${data2.votos.votosPositivos}</div></div>`)
-                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                     } else if (data2.estado == 2 && data2.idUsuario == id.idUsuario) {
-
-                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislike.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                     } else if ((data2.estado == 3 || data2.estado == 4) && data2.idUsuario == id.idUsuario) {
-
-                                         $(`#imgDislike${data2.idPublicacion}`).html(`<div id='imgDislike${data2.idPublicacion}'><img src='assets/img/dislikeMarcado.png' style='cursor:pointer' width='80%' id='dislike${data2.idPublicacion}'> <div id='numDislikes${data2.idPublicacion}'> ${data2.votos.votosNegativos}</div></div>`)
-                                     } else {
-                                         $(`#numLikes${data2.idPublicacion}`).html(data2.votos.votosPositivos);
-                                         $(`#numDislikes${data2.idPublicacion}`).html(data2.votos.votosNegativos);
-                                     }
-
-
-                                     $(`#like${data2.idPublicacion}`).off();
-                                     $(`#like${data2.idPublicacion}`).on("click", () => {
-
-                                         socket.emit("like", {
-                                             idPublicacion: data2.idPublicacion,
-                                             idUsuario: id.idUsuario
-                                         });
-
-                                     });
-                                     $(`#dislike${data2.idPublicacion}`).off();
-                                     $(`#dislike${data2.idPublicacion}`).on("click", () => {
-
-                                         socket.emit("dislike", {
-                                             idPublicacion: data2.idPublicacion,
-                                             idUsuario: id.idUsuario
-                                         });
-
-                                     });
-
-                                 }
-                             })
-
-                         });*/
-
-
-
-
-
-
-
-
-
                     }
 
                 }
@@ -520,7 +420,9 @@ $(() => {
     };
 
     $("#todasLasPublicaciones").on("click", () => {
-
+        $("#publicacionesContent").html(`<br><br><div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            </div>`);
         k = true;
 
         $("#todasLasPublicaciones").addClass("btn btn-primary");

@@ -995,33 +995,6 @@ const guardarPublicacion = (data, id) => {
     });
 }
 
-
-const obtenerPublicacionesDeUsuario = (id) => {
-
-    return new Promise((resolve, reject) => {
-
-        pool.getConnection((err, connection) => {
-
-            if (err) {
-                reject(err)
-            } else {
-                connection.query(`select * from publicacion where id_usu=${id}`, (err, res) => {
-
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(res);
-                    }
-                });
-            }
-
-
-            connection.release();
-        });
-    });
-
-}
-
 const eliminarPublicacion = (idPublicacion, idUsuario) => {
     return new Promise((resolve, reject) => {
 
@@ -1694,7 +1667,6 @@ const guardarRetroalimentacion = (idPublicacion, retroalimentacionPublicacion) =
 
 
 module.exports = {
-    //probarConexion,
     validarCorreo,
     agregarUsuario,
     validarUsername,
@@ -1719,7 +1691,6 @@ module.exports = {
     guardarPrecios,
     obtenerTiposDePublicacion,
     guardarPublicacion,
-    obtenerPublicacionesDeUsuario,
     eliminarPublicacion,
     numeroRegistradoProductos,
     obtenerCostosCB,

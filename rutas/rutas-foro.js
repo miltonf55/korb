@@ -88,10 +88,10 @@ app.post("/guardarPublicacion", autenticacion, (req, res) => {
             ok: false,
             mensaje: "Solo se permiten los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! # $ % & ( ) = , ; : - _ "
         })
-    } else if (descripcion.length > 1000) {
+    } else if (descripcion.length > 400) {
         res.json({
             ok: false,
-            mensaje: "Máximo 1000 caracteres en la descripción"
+            mensaje: "Máximo 400 caracteres en la descripción"
         })
     } else if (titulo.length > 30) {
         res.json({

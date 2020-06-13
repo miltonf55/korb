@@ -19,7 +19,9 @@ $(() => {
         $("#hacerPublicacion").removeClass("btn btn-primary");
         $("#hacerPublicacion").addClass("nav-link");
 
-
+        $("#publicacionesContent").html(`<br><br><div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                            </div>`);
         $.ajax({
             url: "/obtenerTodasLasPublicaciones",
             method: "POST",
@@ -32,13 +34,6 @@ $(() => {
                     $("#publicacionesContent").html(`<h3>Publicaciones</h3><br>
                             <div class="alert alert-danger" role="alert">${data.mensaje}</div>`)
                 } else {
-
-
-
-
-
-
-
                     if (data.publicaciones.length == 0 && (filtrosDeBusqueda.filtroTipoPublicacion != "" || filtrosDeBusqueda.filtroEstadoResolucion != "" || filtrosDeBusqueda.filtroVotos != "")) {
                         $("#publicacionesContent").html(`<br><h4>Todas las Publicaciones</h4><br>
                             <div class="alert alert-danger" role="alert">No hay publicaciones pendientes</div>`);
@@ -50,9 +45,6 @@ $(() => {
 
                         let html = `<br><h4>Todas las Publicaciones</h4><div id='mensajes'></div>
                        `;
-
-
-
                         for (publicacion of data.publicaciones) {
 
 
@@ -190,18 +182,8 @@ $(() => {
                             }
                             html += `
                                         </table>
-                                        <br>
-                                             
-
-                                            
-                                           
+                                        <br>                                      
                                                                         </div><hr>`
-
-
-
-
-
-
 
                         }
 
