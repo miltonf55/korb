@@ -325,7 +325,7 @@ $(() => {
                                       </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancelar</button>
-                                        <button type="button" class="btn btn-primary" id='eliminarPublicacion${publicacion.id_pub}'>Eliminar</button>
+                                        <button type="button" class="btn btn-danger" id='eliminarPublicacion${publicacion.id_pub}'>Eliminar</button>
                                       </div>
                                     </div>
                                   </div>
