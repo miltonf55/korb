@@ -1722,6 +1722,13 @@ module.exports = {
     obtenerPublicacionesDeUsuario,
     eliminarPublicacion,
     numeroRegistradoProductos,
-    obtenerCostosCB
+    obtenerCostosCB,
+    //Nuevos métodos
+    obtenerTodasLasPublicaciones,
+    obtenerPublicacionesDeUsuario,
+    darLikeAPublicacion,
+    darDislikeAPublicacion,
+    obtenerVotosPublicacion,
+    guardarRetroalimentacion
 
 };
