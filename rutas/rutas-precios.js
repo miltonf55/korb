@@ -106,7 +106,7 @@ app.post("/guardarPrecios", autenticacion, verificarPrivilegiosAdmin, (req, res)
         if (producto.precioInput == undefined) {
             res.json({
                 ok: false,
-                mensaje: "Ha ocurrido un error inesperado, intentalo más tarde"
+                mensaje: "Algo salio mal. Por favor intente más tarde."
             });
         }
     }
@@ -217,7 +217,7 @@ app.post("/guardarPrecios", autenticacion, verificarPrivilegiosAdmin, (req, res)
                 console.log(err);
                 res.json({
                     ok: false,
-                    mensaje: "Ha ocurrido un error inesperado"
+                    mensaje: "Algo salio mal. Por favor intente más tarde."
                 })
             })
 
@@ -225,7 +225,7 @@ app.post("/guardarPrecios", autenticacion, verificarPrivilegiosAdmin, (req, res)
             console.log(err);
             res.json({
                 ok: false,
-                mensaje: "Ha ocurrido un error inesperado, intentalo de nuevo más tarde"
+                mensaje: "Algo salio mal. Por favor intente más tarde."
             })
         })
     }

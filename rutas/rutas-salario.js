@@ -106,7 +106,7 @@ app.post("/guardarDatosSalario", autenticacion, (req, res) => {
         }).catch(err => {
             res.json({
                 ok: false,
-                mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+                mensaje: "Algo salio mal. Por favor intente más tarde"
             })
 
         });
@@ -166,7 +166,7 @@ app.post("/guardarDatosGastos", autenticacion, (req, res) => {
             }).catch(err => {
                 res.json({
                     ok: true,
-                    mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+                    mensaje: "Algo salio mal. Por favor intente más tarde."
                 });
             })
 
@@ -174,7 +174,7 @@ app.post("/guardarDatosGastos", autenticacion, (req, res) => {
         }).catch(err => {
             res.json({
                 ok: true,
-                mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+                mensaje: "Algo salio mal. Por favor intente más tarde."
             });
         })
 

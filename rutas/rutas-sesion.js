@@ -55,7 +55,7 @@ app.post("/login", autenticacionInversa, (req, res) => {
             }
             res.redirect("/proyecciones");
         } else {
-            req.session.inicioSesionFallido = "Ha ocurrido un error, vuelve a intentarlo porfavor";
+            req.session.inicioSesionFallido = "Algo salio mal. Por favor intente más tarde.";
             req.session.correoLogin = req.body.correo;
 
             res.redirect("/login");
@@ -148,7 +148,7 @@ app.post("/registro", autenticacionInversa, (req, res) => {
                             req.session.datosForm = undefined;
                             res.redirect("/login");
                         }).catch((error) => {
-                            req.session.mensaje = "Ha ocurrido un error inesperado, vuelve a intentarlo porfavor";
+                            req.session.mensaje = "Algo salio mal. Por favor intente más tarde.";
                             res.redirect("/registro");
                         });
                     }

@@ -108,7 +108,7 @@ app.post("/guardarPublicacion", autenticacion, (req, res) => {
             if (!valido) {
                 res.json({
                     ok: false,
-                    mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+                    mensaje: "Algo salio mal. Por favor intente más tarde."
                 })
             } else {
                 let data = {
@@ -129,7 +129,7 @@ app.post("/guardarPublicacion", autenticacion, (req, res) => {
                     console.log(err)
                     res.json({
                         ok: false,
-                        mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+                        mensaje: "Algo salio mal. Por favor intente más tarde."
                     })
                 });
 
@@ -138,7 +138,7 @@ app.post("/guardarPublicacion", autenticacion, (req, res) => {
             console.log(err)
             res.json({
                 ok: false,
-                mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+                mensaje: "Algo salio mal. Por favor intente más tarde."
             })
 
         });
@@ -158,7 +158,7 @@ app.get("/obtenerMisPublicaciones", autenticacion, (req, res) => {
     }).catch(err => {
         res.json({
             ok: false,
-            mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+            mensaje: "Algo salio mal. Por favor intente más tarde."
         })
     })
 
@@ -175,7 +175,7 @@ app.post("/eliminarPublicacion", autenticacion, (req, res) => {
         console.log(err);
         res.json({
             ok: false,
-            mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+            mensaje: "Algo salio mal. Por favor intente más tarde."
         })
     });
 });

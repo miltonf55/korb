@@ -11,7 +11,7 @@ $(() => {
             data,
             success: (datae) => {
                 if (!datae.ok) {
-                    $("#chart").html(`<div class="alert alert-danger" role="alert">Algo salio mal. Por favor intente mas tarde.</div>`)
+                    $("#chart").html(`<div class="alert alert-danger" role="alert">${datae.ms}</div>`)
                 } else {
                     let html=grafica(datae.proyeccion, data.date);
                     $("#chart").html(html);
@@ -85,7 +85,7 @@ $(() => {
                 data,
                 success: (datae) => {
                     if (!datae.ok) {
-                        $("#chart").html(`<div class="alert alert-danger" role="alert">Algo salio mal. Por favor intente mas tarde.</div>`)
+                        $("#chart").html(`<div class="alert alert-danger" role="alert">${datae.ms}</div>`)
                     } else {
                         let html=grafica(datae.proyeccion, data.date);
                         $("#chart").html(html);
