@@ -13,13 +13,13 @@ const letras = (checkStr) => {
             break;
         }
     }
-    if (checkStr.length < 1 || checkStr.length > 20) {
+    if (checkStr.length < 1 || checkStr.length > 30) {
         todovalido = false;
     }
     return todovalido;
 }
 const alphaNumC = (checkStr) => {
-    var checkOk = "ABCDEFGHIJHKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "@1234567890.¡?¿! ";
+    var checkOk = "ABCDEFGHIJHKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "@1234567890.¡?¿!<> ";
     var todovalido = true;
     for (i = 0; i < checkStr.length; i++) {
         ch = checkStr.charAt(i);
@@ -34,6 +34,46 @@ const alphaNumC = (checkStr) => {
         }
     }
     if (checkStr.length < 1) {
+        todovalido = false;
+    }
+    return todovalido;
+}
+const alphaNum3 = (checkStr) => {
+    var checkOk = "ABCDEFGHIJHKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "@1234567890.¡?¿!<> ";
+    var todovalido = true;
+    for (i = 0; i < checkStr.length; i++) {
+        ch = checkStr.charAt(i);
+        for (j = 0; j < checkOk.length; j++) {
+            if (ch == checkOk.charAt(j)) {
+                break;
+            }
+        }
+        if (j == checkOk.length) {
+            todovalido = false;
+            break;
+        }
+    }
+    if (checkStr.length < 1 || checkStr.length > 30) {
+        todovalido = false;
+    }
+    return todovalido;
+}
+const correo = (checkStr) => {
+    var checkOk = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "@1234567890.";
+    var todovalido = true;
+    for (i = 0; i < checkStr.length; i++) {
+        ch = checkStr.charAt(i);
+        for (j = 0; j < checkOk.length; j++) {
+            if (ch == checkOk.charAt(j)) {
+                break;
+            }
+        }
+        if (j == checkOk.length) {
+            todovalido = false;
+            break;
+        }
+    }
+    if (checkStr.length < 1 || checkStr.length > 30) {
         todovalido = false;
     }
     return todovalido;
@@ -131,5 +171,7 @@ module.exports = {
     validarDecimal,
     validarEntero,
     validarDecimal2,
-    validarDate
+    validarDate,
+    correo,
+    alphaNum3
 };

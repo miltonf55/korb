@@ -39,34 +39,44 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", autenticacionInversa, (req, res) => {
+    let Usuario = {
+        correo: req.body.correo,
+        password: req.body.password
+    }
+    if (!validaciones.correo(Usuario.correo)) {
+        req.session.inicioSesionFallido = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 30 caracteres y que solo puedes escribir letras, números, arroba y punto";
+        res.redirect("/login");
+
+    }else if (!validaciones.alphaNum3(Usuario.password)) {
+        req.session.inicioSesionFallido = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 30 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+        res.redirect("/login" );
+    }
+    else {
+        db.iniciarSesion(Usuario.correo, Usuario.password).then(datos => {
+            if (datos == undefined) {
+                req.session.inicioSesionFallido = "Correo o contraseña incorrectos";
+                req.session.correoLogin = req.body.correo;
+                res.redirect("/login");
+
+            } else if (datos != undefined) {
+                req.session.usuario = datos;
 
 
-    db.iniciarSesion(req.body.correo, req.body.password).then(datos => {
-        if (datos == undefined) {
-            req.session.inicioSesionFallido = "Correo o contraseña incorrectos";
-            req.session.correoLogin = req.body.correo;
-            res.redirect("/login");
+                if (req.session.usuario.privilegios == 1) {
+                    req.session.admin = 1;
+                }
+                res.redirect("/proyecciones");
+            } else {
+                req.session.inicioSesionFallido = "Algo salio mal. Por favor intente más tarde.";
+                req.session.correoLogin = req.body.correo;
 
-        } else if (datos != undefined) {
-            req.session.usuario = datos;
-
-
-            if (req.session.usuario.privilegios == 1) {
-                req.session.admin = 1;
+                res.redirect("/login");
             }
-            res.redirect("/proyecciones");
-        } else {
-            req.session.inicioSesionFallido = "Algo salio mal. Por favor intente más tarde.";
-            req.session.correoLogin = req.body.correo;
+        }).catch(console.log);
 
-            res.redirect("/login");
-        }
-    }).catch(console.log);
-
-    req.session.inicioSesionFallido = undefined;
-    req.session.correoLogin = undefined;
-
-
+        req.session.inicioSesionFallido = undefined;
+        req.session.correoLogin = undefined;
+     }
 
 });
 
@@ -106,21 +116,27 @@ app.post("/registro", autenticacionInversa, (req, res) => {
 
     req.session.datosForm = Usuario;
 
-    if (Usuario.nombre.split(" ").join("") === "" || Usuario.appaterno.split(" ").join("") === "" || Usuario.apmaterno.split(" ").join("") === "" ||
-        Usuario.correo.split(" ").join("") === "" || Usuario.username.split(" ").join("") === "" || Usuario.password.split(" ").join("") === "" ||
-        Usuario.password2.split(" ").join("") === "") {
-
-        req.session.mensaje = "Asegurate de haber llenado todos los campos";
+    if (!validaciones.letras(Usuario.nombre)) {
+        req.session.mensaje = "Recuerda no dejar el nombre vacio, que solo puedes escribir letras  y que la longitud debe ser menor a 30 caracteres";
         res.redirect("/registro");
-    } else if (!validaciones.alphaNumC(Usuario.nombre) || !validaciones.alphaNumC(Usuario.appaterno) || !validaciones.alphaNumC(Usuario.apmaterno) ||
-        !validaciones.alphaNumC(Usuario.correo) || !validaciones.alphaNumC(Usuario.username) || !validaciones.alphaNumC(Usuario.password) ||
-        !validaciones.alphaNumC(Usuario.password2)) {
-        console.log(validaciones.alphaNumC(Usuario.correo));
+    }else if ( !validaciones.letras(Usuario.appaterno) || !validaciones.letras(Usuario.apmaterno)) {
+        req.session.mensaje = "Recuerda no dejar tus apellidos vacios, que solo puedes escribir letras  y que la longitud debe ser menor a 30 caracteres";
+        res.redirect("/registro");
+    }
+    else if (!validaciones.correo(Usuario.correo)) {
 
-        req.session.mensaje = "Solo se permiten los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @";
+        req.session.mensaje = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 30 caracteres y que solo puedes escribir letras, números, arroba y punto";
         res.redirect("/registro");
 
-    } else {
+    }else if (!validaciones.alphaNum3(Usuario.username)) {
+        req.session.mensaje = "Recuerda no dejar tu usuario, la longitud debe ser menor a 30 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+        res.redirect("/registro");
+    }
+    else if (!validaciones.alphaNum3(Usuario.password)) {
+        req.session.mensaje = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 30 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+        res.redirect("/login" );
+    }
+    else {
 
         db.validarCorreo(Usuario.correo.split(" ").join("")).then(msg => {
 

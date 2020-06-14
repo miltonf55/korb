@@ -156,7 +156,7 @@ $(() => {
                                           <div class="input-group-prepend">
                                             
                                           </div>
-                                          <textarea class="form-control" aria-label="With textarea" id='retroalimentacionPublicacion${publicacion.id_pub}' maxlength="1000"></textarea>
+                                          <textarea class="form-control" aria-label="With textarea" id='retroalimentacionPublicacion${publicacion.id_pub}' maxlength="240"></textarea>
                                           <br><div id='caracteresDescripcion'></div>
                                         </div>`
 

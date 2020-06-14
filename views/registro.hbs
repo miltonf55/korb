@@ -26,39 +26,39 @@
 		<tr>
 			
 			<td>
-    			<input name="nombre" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre(s)" {{#if Datos.nombre}}value='{{Datos.nombre}}'{{/if}}>
+    			<input name="nombre" type="text" class="form-control" id="exampleInputEmail1" maxlength="30" aria-describedby="emailHelp" placeholder="Nombre(s)" {{#if Datos.nombre}}value='{{Datos.nombre}}'{{/if}}>
 			</td>
 			
 			<td>
-    			<input name="appaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Paterno"
+    			<input name="appaterno" type="text" class="form-control" maxlength="30" aria-describedby="emailHelp" placeholder="Apellido Paterno"
     			{{#if Datos.appaterno}}value='{{Datos.appaterno}}'{{/if}}>
 			</td>
 			
 			<td>
-    			<input name="apmaterno" type="text" class="form-control"  aria-describedby="emailHelp" placeholder="Apellido Materno"
+    			<input name="apmaterno" type="text" class="form-control" maxlength="30" aria-describedby="emailHelp" placeholder="Apellido Materno"
     			{{#if Datos.apmaterno}}value='{{Datos.apmaterno}}'{{/if}}>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="4">
-				<input name="correo" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Correo Electrónico" {{#if Datos.correo}}value='{{Datos.correo}}'{{/if}}>
+				<input name="correo" type="email" class="form-control" maxlength="30" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Correo Electrónico" {{#if Datos.correo}}value='{{Datos.correo}}'{{/if}}>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="4">
-				<input name="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre de Usuario" {{#if Datos.username}}value='{{Datos.username}}'{{/if}}>
+				<input name="username" type="text" class="form-control" maxlength="30" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nombre de Usuario" {{#if Datos.username}}value='{{Datos.username}}'{{/if}}>
 				
 			</td>
 		</tr>
 		<tr>
 			<td colspan="4">
-				<input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contraseña"
+				<input name="password" type="password" class="form-control" maxlength="30" id="exampleInputPassword1" placeholder="Contraseña"
 				{{#if Datos.password}}value='{{Datos.password}}'{{/if}}> 
 			</td>
 		</tr>
 		<tr>
 			<td colspan="4">
-				<input name="password2" type="password" class="form-control" id="exampleInputPassword1" placeholder="Confirmar Contraseña"
+				<input name="password2" type="password" class="form-control" maxlength="30" id="exampleInputPassword1" placeholder="Confirmar Contraseña"
 				{{#if Datos.password2}}value='{{Datos.password2}}'{{/if}}> 
 			</td>
 			

@@ -142,7 +142,7 @@ $(() => {
                     });
 
                     $("#descripcionPublicacion").on("keyup", () => {
-                        $("#caracteresDescripcion").html(`${$("#descripcionPublicacion").val().length}/1000`)
+                        $("#caracteresDescripcion").html(`${$("#descripcionPublicacion").val().length}/400`)
                     });
 
                 }
@@ -226,7 +226,7 @@ $(() => {
 
 
                             if (publicacion.id_sta == 1) {
-                                estadoPublicacionEscrito = `<div class="alert alert - primary" role="alert" align='center'>SIN RESOLVER</div>`;
+                                estadoPublicacionEscrito = `<div class="alert alert-primary" role="alert" align='center'>SIN RESOLVER</div>`;
                             } else {
                                 estadoPublicacionEscrito = `<div class="alert alert-success" role="alert" align='center'>RESUELTA</div>`;
                             }
