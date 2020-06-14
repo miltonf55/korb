@@ -53,7 +53,7 @@ const alphaNum3 = (checkStr) => {
             break;
         }
     }
-    if (checkStr.length < 1 || checkStr.length > 30) {
+    if (checkStr.length < 1 || checkStr.length > 40) {
         todovalido = false;
     }
     return todovalido;
@@ -73,7 +73,7 @@ const correo = (checkStr) => {
             break;
         }
     }
-    if (checkStr.length < 1 || checkStr.length > 30) {
+    if (checkStr.length < 1 || checkStr.length > 40) {
         todovalido = false;
     }
     return todovalido;

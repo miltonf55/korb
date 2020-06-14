@@ -44,11 +44,11 @@ app.post("/login", autenticacionInversa, (req, res) => {
         password: req.body.password
     }
     if (!validaciones.correo(Usuario.correo)) {
-        req.session.inicioSesionFallido = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 30 caracteres y que solo puedes escribir letras, números, arroba y punto";
+        req.session.inicioSesionFallido = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 40 caracteres y que solo puedes escribir letras, números, arroba y punto";
         res.redirect("/login");
 
     }else if (!validaciones.alphaNum3(Usuario.password)) {
-        req.session.inicioSesionFallido = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 30 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+        req.session.inicioSesionFallido = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 40 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
         res.redirect("/login" );
     }
     else {
@@ -125,15 +125,15 @@ app.post("/registro", autenticacionInversa, (req, res) => {
     }
     else if (!validaciones.correo(Usuario.correo)) {
 
-        req.session.mensaje = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 30 caracteres y que solo puedes escribir letras, números, arroba y punto";
+        req.session.mensaje = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 40 caracteres y que solo puedes escribir letras, números, arroba y punto";
         res.redirect("/registro");
 
     }else if (!validaciones.alphaNum3(Usuario.username)) {
-        req.session.mensaje = "Recuerda no dejar tu usuario, la longitud debe ser menor a 30 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+        req.session.mensaje = "Recuerda no dejar tu usuario, la longitud debe ser menor a 40 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
         res.redirect("/registro");
     }
     else if (!validaciones.alphaNum3(Usuario.password)) {
-        req.session.mensaje = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 30 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+        req.session.mensaje = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 40 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
         res.redirect("/login" );
     }
     else {
