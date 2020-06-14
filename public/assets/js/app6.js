@@ -146,14 +146,6 @@ $(() => {
                                                     </tr>`
 
 
-
-                            if (publicacion.ret_pub != null) {
-                                html += `<tr>
-                                                    <td colspan="3">
-                                                        Comentarios del Desarrollador: ${publicacion.ret_pub}
-                                                    </td>
-                                                </tr>`
-                            } else {
                                 html += `<tr>
                                 <tr><td colspan='3'>Respuesta: 
                                 "
@@ -179,7 +171,6 @@ $(() => {
                                         <button id='guardarRetroalimentacion${publicacion.id_pub}' class='btn btn-primary btn-block'>Responder Publicación</button>
                                     </td>
                                 </tr>`
-                            }
                             html += `
                                         </table>
                                         <br>                                      
