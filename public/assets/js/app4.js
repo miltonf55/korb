@@ -337,16 +337,17 @@ $(() => {
 
                         $("#publicacionesContent").html(html);
                         for (publicacion of data.publicaciones) {
-                            $(`#eliminarPublicacion${publicacion.id_pub}`).on("click", () => {
+                            let idPublicacion = publicacion.id_pub;
+                            $(`#eliminarPublicacion${idPublicacion}`).on("click", () => {
 
                                 $.ajax({
                                     url: "/eliminarPublicacion",
                                     method: "POST",
                                     data: {
-                                        id: publicacion.id_pub
+                                        id: idPublicacion
                                     },
                                     success: (msg) => {
-                                        $(`#exampleModal${publicacion.id_pub}`).modal('toggle');
+                                        $(`#exampleModal${idPublicacion}`).modal('toggle');
                                         $('body').removeClass('modal-open');
                                         $('.modal-backdrop').remove();
 

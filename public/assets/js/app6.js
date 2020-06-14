@@ -212,24 +212,27 @@ $(() => {
                         }
 
                         $("#publicacionesContent").html(html);
+
+
                         for (publicacion of data.publicaciones) {
-                            $(`#eliminarPublicacion${publicacion.id_pub}`).on("click", () => {
+                            let idPublicacion = publicacion.id_pub;
+                            $(`#eliminarPublicacion${idPublicacion}`).on("click", () => {
 
                                 $.ajax({
                                     url: "/eliminarPublicacion2",
                                     method: "POST",
                                     data: {
-                                        id: publicacion.id_pub
+                                        id: idPublicacion
                                     },
                                     success: (msg) => {
-                                        $(`#exampleModal${publicacion.id_pub}`).modal('toggle');
+                                        $(`#exampleModal${idPublicacion}`).modal('toggle');
                                         $('body').removeClass('modal-open');
                                         $('.modal-backdrop').remove();
 
                                         if (!msg.ok) {
                                             $("#mensajes").html(`<div class="alert alert-danger" role="alert" align='center'>${msg.mensaje}</div>`)
                                         } else {
-                                            $("#misPublicaciones").click();
+                                            $("#todasLasPublicaciones").click();
                                             socket.emit("nuevaPublicacion", {});
                                             alert(`${msg.mensaje}`);
 

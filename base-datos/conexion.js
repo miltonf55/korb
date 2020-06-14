@@ -1,8 +1,17 @@
-const c = require('./confDB.js');
+/*const c = require('./confDB.js');
 
 //Conexión a la db
 var pool = c.Connect;
+*/
 
+const mysql = require("mysql");
+const pool = mysql.createPool({
+    host: "localhost",
+    user: "root",
+    password: "n0m3l0",
+    database: "korbdb",
+    port: 3306
+});
 
 const {
     cifrar,
@@ -1675,7 +1684,7 @@ const eliminarPublicacion2 = (idPublicacion) => {
             if (err) {
                 reject(err)
             } else {
-
+                console.log(`delete from publicacion where id_pub=${idPublicacion}`)
                 connection.query(`delete from publicacion where id_pub=${idPublicacion}`, (err) => {
                     if (err) {
                         reject(err)
