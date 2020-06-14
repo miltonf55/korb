@@ -1,7 +1,17 @@
-const c = require('./confDB.js');
+/*const c = require('./confDB.js');
 
 //Conexión a la db
 var pool = c.Connect;
+*/
+
+const mysql = require("mysql");
+const pool = mysql.createPool({
+    host: "localhost",
+    user: "root",
+    password: "n0m3l0",
+    database: "korbdb",
+    port: 3306
+});
 
 const {
     cifrar,
@@ -979,8 +989,8 @@ const guardarPublicacion = (data, id) => {
             if (err) {
                 reject(err)
             } else {
-                connection.query(`insert into publicacion(tit_pub,des_pub,fec_pub,hor_pub,min_pub,id_tip,id_usu,id_sta,vot_pub)
-                    values ('${data.titulo}','${data.descripcion}','${data.fecha}','${data.hora}','${data.minuto}',${data.idTipoPublicacion},${id},1,0)`, (err) => {
+                connection.query(`insert into publicacion(tit_pub,des_pub,fec_pub,hor_pub,min_pub,id_tip,id_usu,id_sta,vot_pub,ret_pub)
+                    values ('${data.titulo}','${data.descripcion}','${data.fecha}','${data.hora}','${data.minuto}',${data.idTipoPublicacion},${id},1,0,NULL)`, (err) => {
                     if (err) {
                         reject(err)
                     } else {
@@ -1665,6 +1675,39 @@ const guardarRetroalimentacion = (idPublicacion, retroalimentacionPublicacion) =
 }
 
 
+const eliminarPublicacion2 = (idPublicacion) => {
+    return new Promise((resolve, reject) => {
+
+        pool.getConnection((err, connection) => {
+
+
+            if (err) {
+                reject(err)
+            } else {
+
+                connection.query(`delete from publicacion where id_pub=${idPublicacion}`, (err) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve("Publicación Eliminada");
+                    }
+                });
+
+
+
+
+
+
+
+            }
+
+
+            connection.release();
+        });
+    });
+}
+
+
 
 module.exports = {
     validarCorreo,
@@ -1700,6 +1743,7 @@ module.exports = {
     darLikeAPublicacion,
     darDislikeAPublicacion,
     obtenerVotosPublicacion,
-    guardarRetroalimentacion
+    guardarRetroalimentacion,
+    eliminarPublicacion2
 
 };

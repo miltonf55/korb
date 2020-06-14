@@ -198,6 +198,22 @@ app.post("/eliminarPublicacion", autenticacion, (req, res) => {
     });
 });
 
+app.post("/eliminarPublicacion2", autenticacion, (req, res) => {
+    let body = req.body;
+    db.eliminarPublicacion2(body.id).then(msg => {
+        res.json({
+            ok: true,
+            mensaje: "La publicación ha sido eliminada"
+        })
+    }).catch(err => {
+        console.log(err);
+        res.json({
+            ok: false,
+            mensaje: "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde"
+        })
+    });
+});
+
 app.post("/obtenerTodasLasPublicaciones", autenticacion, (req, res) => {
     let filtrosDeBusqueda = req.body.filtrosDeBusqueda;
 

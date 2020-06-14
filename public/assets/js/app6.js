@@ -147,14 +147,9 @@ $(() => {
 
 
 
-                            if (publicacion.ret_pub != null) {
-                                html += `<tr>
-                                                    <td colspan="3">
-                                                        Comentarios del Desarrollador: ${publicacion.ret_pub}
-                                                    </td>
-                                                </tr>`
-                            } else {
-                                html += `<tr>
+
+
+                            html += `<tr>
                                 <tr><td colspan='3'>Respuesta: 
                                 "
                                         <div class="input-group mb-3">
@@ -165,30 +160,91 @@ $(() => {
                                           <br><div id='caracteresDescripcion'></div>
                                         </div>`
 
-                                if (publicacion.id_tip == 2 || publicacion.id_tip == 3) {
-                                    html += `
+                            if (publicacion.id_tip == 2 || publicacion.id_tip == 3) {
+                                html += `
                                         En caso de que el problema continue, puede volver a hacer una publicación o mandar un correo a geleceksoftwaredevelopment@gmail.com"    
                                     </td>
                                     </tr>`
-                                } else {
-                                    html += `"</td></tr>`
-                                }
+                            } else {
+                                html += `"</td></tr>`
+                            }
 
-                                html += `<tr>
+                            html += `<tr>
                                     <td colspan='3'>
                                         <button id='guardarRetroalimentacion${publicacion.id_pub}' class='btn btn-primary btn-block'>Responder Publicación</button>
                                     </td>
                                 </tr>`
-                            }
+
                             html += `
                                         </table>
                                         <br>                                      
-                                                                        </div><hr>`
+                                                                        `
+                            html += `
+                            </table>
+                            <br>
+                                 <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal${publicacion.id_pub}">
+                                  Eliminar Publicación
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal${publicacion.id_pub}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">ATENCIÓN</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        ¿Estas seguro de querer eliminar esta publicación?
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cancelar</button>
+                                        <button type="button" class="btn btn-danger" id='eliminarPublicacion${publicacion.id_pub}'>Eliminar</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                                            </div><hr>`
+
 
                         }
 
-
                         $("#publicacionesContent").html(html);
+                        for (publicacion of data.publicaciones) {
+                            $(`#eliminarPublicacion${publicacion.id_pub}`).on("click", () => {
+
+                                $.ajax({
+                                    url: "/eliminarPublicacion2",
+                                    method: "POST",
+                                    data: {
+                                        id: publicacion.id_pub
+                                    },
+                                    success: (msg) => {
+                                        $(`#exampleModal${publicacion.id_pub}`).modal('toggle');
+                                        $('body').removeClass('modal-open');
+                                        $('.modal-backdrop').remove();
+
+                                        if (!msg.ok) {
+                                            $("#mensajes").html(`<div class="alert alert-danger" role="alert" align='center'>${msg.mensaje}</div>`)
+                                        } else {
+                                            $("#misPublicaciones").click();
+                                            socket.emit("nuevaPublicacion", {});
+                                            alert(`${msg.mensaje}`);
+
+                                        }
+
+
+
+
+                                    }
+                                })
+                            })
+
+
+
+                        }
 
                         for (publicacion of data.publicaciones) {
                             let idPublicacion = publicacion.id_pub;
