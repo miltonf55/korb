@@ -171,22 +171,24 @@ app.post("/guardarModificaciones", (req, res) => {
         let body = req.body;
 
         if (body.nombre != undefined && body.appaterno != undefined && body.apmaterno != undefined && body.username != undefined && body.correo != undefined) {
-            if (body.nombre.split(" ").join("") === "" || body.appaterno.split(" ").join("") === "" || body.apmaterno.split(" ").join("") === "" ||
-                body.username.split(" ").join("") === "" || body.correo.split(" ").join("") === "") {
-
-                req.session.alertaAdminModificarDatos = "No puedes dejar espacios en blanco";
+            if (!validaciones.letras(body.nombre)) {
+                req.session.alertaAdminModificarDatos = "Recuerda no dejar el nombre vacio, que solo puedes escribir letras  y que la longitud debe ser menor a 30 caracteres";
                 req.session.idModificarUsuario = req.session.idGuardarCambios;
                 res.redirect("/modificarUsuario");
-
-            } else if (!validaciones.alphaNumC(body.nombre) || !validaciones.alphaNumC(body.appaterno) || !validaciones.alphaNumC(body.apmaterno) ||
-                !validaciones.alphaNumC(body.username) || !validaciones.alphaNumC(body.correo)) {
-
-
-                req.session.alertaAdminModificarDatos = "Solo se permiten los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @";
+            }else if ( !validaciones.letras(body.appaterno) || !validaciones.letras(body.apmaterno)) {
+                req.session.alertaAdminModificarDatos = "Recuerda no dejar tus apellidos vacios, que solo puedes escribir letras  y que la longitud debe ser menor a 30 caracteres";
                 req.session.idModificarUsuario = req.session.idGuardarCambios;
                 res.redirect("/modificarUsuario");
-
-            } else {
+            }else if (!validaciones.correo(body.correo)) {
+                req.session.alertaAdminModificarDatos = "Recuerda no dejar tu correo vacio, la longitud debe ser menor a 40 caracteres y que solo puedes escribir letras, números, arroba y punto";
+                req.session.idModificarUsuario = req.session.idGuardarCambios;
+                res.redirect("/modificarUsuario");
+            }else if (!validaciones.alphaNum3(body.username)) {
+                req.session.alertaAdminModificarDatos = "Recuerda no dejar tu usuario, la longitud debe ser menor a 40 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
+                req.session.idModificarUsuario = req.session.idGuardarCambios;
+                res.redirect("/modificarUsuario");
+            }
+            else {
 
                 db.validarCorreo(body.correo.split(" ").join("")).then(msg => {
 
