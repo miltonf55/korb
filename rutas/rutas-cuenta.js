@@ -133,13 +133,15 @@ app.post("/editarDatos", autenticacion, (req, res) => {
         }
         else {
             db.validarCorreo(body.correo.split(" ").join("")).then(msg => {
-                if (!msg && body.correo.split(" ").join("") !== req.session.body.correo) {
+
+
+                if (!msg && body.correo.split(" ").join("") !== req.session.usuario.correo) {
                     req.session.alertaModificarDatos = "El correo ingresado ya siendo usado por otro usuario";
                     req.session.EditarDatosUsuario = true;
                     res.redirect("/cuenta");
                 } else {
                     db.validarUsername(body.username.split(" ").join("")).then(msg => {
-                        if (!msg && body.username.split(" ").join("") !== req.session.body.username) {
+                        if (!msg && body.username.split(" ").join("") !== req.session.usuario.username) {
                             req.session.alertaModificarDatos = "El nombre de usuario ingresado ya siendo usado por otro usuario";
                             req.session.EditarDatosUsuario = true;
                             res.redirect("/cuenta");
@@ -155,19 +157,18 @@ app.post("/editarDatos", autenticacion, (req, res) => {
                             db.actualizarDatosUsuario(req.session.usuario.id, datos).then(msg => {
                                 req.session.usuario = msg;
                                 req.session.EditarDatosUsuario = undefined;
-                                req.session.alertaModificarDatos = "Datos de usuario actualizados";
+                                req.session.alertaModificarDatos = "Datos de Usuario Actualizados";
                                 res.redirect("/cuenta");
 
                             }).catch(msg => {
                                 console.log(msg);
-                                req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.55";
+                                req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.";
                                 req.session.EditarDatosUsuario = true;
                                 res.redirect("/cuenta");
                             });
                         }
                     }).catch(msg => {
-                        console.log(msg)
-                        req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.66";
+                        req.session.alertaModificarDatos = "Algo salio mal. Por favor intente más tarde.";
                         req.session.EditarDatosUsuario = true;
                         res.redirect("/cuenta");
                     });
