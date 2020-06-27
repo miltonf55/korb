@@ -1,3 +1,5 @@
+const validator = require("email-validator");
+
 const letras = (checkStr) => {
     var checkOk = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + " ";
     var todovalido = true;
@@ -59,23 +61,7 @@ const alphaNum3 = (checkStr) => {
     return todovalido;
 }
 const correo = (checkStr) => {
-    var checkOk = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZÁÉÍÓÚ" + "abcdefghijklmnopqrstuvwxyzáéíóú" + "@1234567890.";
-    var todovalido = true;
-    for (i = 0; i < checkStr.length; i++) {
-        ch = checkStr.charAt(i);
-        for (j = 0; j < checkOk.length; j++) {
-            if (ch == checkOk.charAt(j)) {
-                break;
-            }
-        }
-        if (j == checkOk.length) {
-            todovalido = false;
-            break;
-        }
-    }
-    if (checkStr.length < 1 || checkStr.length > 40) {
-        todovalido = false;
-    }
+    var todovalido = validator.validate(checkStr);
     return todovalido;
 }
 const escritura = (checkStr) => {
