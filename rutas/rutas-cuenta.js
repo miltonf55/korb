@@ -65,9 +65,7 @@ app.post("/editarPassword", autenticacion, (req, res) => {
 
     let body = req.body;
 
-
-
-    if (!validaciones.alphaNum3(body.password)) {
+    if (!validaciones.alphaNum3(body.password1)) {
         req.session.alertaModificarPassword = "Recuerda no dejar tu contraseña vacia, la longitud debe ser menor a 40 y que solo puedes escribir los caracteres Aa-Zz Áá-Úú 0-9 . ¡ ? ¿ ! @ < >";
         req.session.EditarPasswordUsuario = true;
         res.redirect("/cuenta");
@@ -76,18 +74,15 @@ app.post("/editarPassword", autenticacion, (req, res) => {
         req.session.alertaModificarPassword = "Las nuevas contraseñas no coinciden";
         req.session.EditarPasswordUsuario = true;
         res.redirect("/cuenta");
-    } else if (!validaciones.alphaNum3(body.password0)) {
-        req.session.alertaModificarPassword = "Contraseña anterior incorrecta";
-        req.session.EditarPasswordUsuario = true;
-        res.redirect("/cuenta");
-    } else {
-        db.verificarPassword(req.session.body.id, req.body.password0).then(msg => {
+    } 
+    else {
+        db.verificarPassword(req.session.usuario.id, req.body.password).then(msg => {
             if (!msg) {
                 req.session.alertaModificarPassword = "Contraseña anterior incorrecta";
                 req.session.EditarPasswordUsuario = true;
                 res.redirect("/cuenta");
             } else {
-                db.actualizarPassword(req.session.body.id, req.body.password1).then(msg => {
+                db.actualizarPassword(req.session.usuario.id, req.body.password1).then(msg => {
                     req.session.EditarPasswordUsuario = undefined;
                     req.session.alertaModificarDatos = msg;
                     res.redirect("/cuenta");
@@ -103,10 +98,6 @@ app.post("/editarPassword", autenticacion, (req, res) => {
 
         });
     }
-
-
-
-
 
 });
 
